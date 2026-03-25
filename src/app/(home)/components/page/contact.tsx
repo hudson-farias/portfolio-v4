@@ -12,7 +12,7 @@ export function Contact() {
         Me chama por email para conversar sobre seu projeto ou oportunidade.
       </p>
       <Button asChild size="lg" className="mt-6">
-        <a href="mailto:voce@email.com">voce@email.com</a>
+        <a href="mailto:hudson.farias.dev@gmail.com">hudson.farias.dev@gmail.com</a>
       </Button>
     </section>
   )
