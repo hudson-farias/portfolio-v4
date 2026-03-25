@@ -7,6 +7,9 @@ import { HomePageData } from "./interfaces"
 
 
 const data: HomePageData = {
+  about: "Desenvolvedor de software com experiencia desde janeiro de 2021. Construo aplicacoes web focadas em performance, qualidade e manutencao.",
+  about2: "Atuo com desenvolvimento de software e tenho como base linguagenscomo Python, C#, TypeScript e PHP. Trabalho principalmente comFastAPI, Playwright, Next.js e Tailwind, unindo backend, frontend eautomacao para entregar produtos confiaveis.",
+
   languages: ["Python", "C#", "TypeScript", "PHP"],
   frameworks: ["FastAPI", "Playwright", "Next.js", "Tailwind CSS"],
   technologies: ["Git", "SQL", "NoSQL", "Docker"],
@@ -17,7 +20,7 @@ const data: HomePageData = {
 export default async function Home() {
   return (
     <>
-      <About />
+      <About about={data.about} about2={data.about2} />
       <Stack frameworks={data.frameworks} languages={data.languages} technologies={data.technologies} />
       <Projects projects={data.projects} />
       <Contact />

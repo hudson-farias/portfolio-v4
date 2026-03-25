@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 
-export function About() {
+export function About({about, about2}: {about: string, about2: string}) {
     return (
         <>
             <section className="grid items-center gap-10 rounded-3xl border bg-card p-8 md:grid-cols-2 md:p-12">
@@ -15,24 +15,31 @@ export function About() {
                         <br />
                         Software Developer.
                     </h1>
-                    <p className="max-w-xl text-lg text-muted-foreground">
-                        Desenvolvedor de software com experiencia desde janeiro de 2021.
-                        Construo aplicacoes web focadas em performance, qualidade e
-                        manutencao.
-                    </p>
+                    <p className="max-w-xl text-lg text-muted-foreground">{about}</p>
                     <div className="flex flex-wrap gap-3">
                         <Button asChild size="lg">
                             <a
-                                href="https://github.com/"
+                                href="https://gitlab.com/hudsonfarias"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Ver GitLab
+                            </a>
+                        </Button>
+
+                        <Button asChild size="lg">
+                            <a
+                                href="https://github.com/hudson-farias"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 Ver GitHub
                             </a>
                         </Button>
+
                         <Button asChild size="lg" variant="outline">
                             <a
-                                href="https://www.linkedin.com/"
+                                href="https://www.linkedin.com/in/hudsonfarias/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -62,12 +69,7 @@ export function About() {
 
             <section id="about" className="scroll-mt-24 space-y-4">
                 <h2 className="text-2xl font-semibold tracking-tight">Sobre mim</h2>
-                <p className="max-w-3xl text-muted-foreground">
-                    Atuo com desenvolvimento de software e tenho como base linguagens
-                    como Python, C#, TypeScript e PHP. Trabalho principalmente com
-                    FastAPI, Playwright, Next.js e Tailwind, unindo backend, frontend e
-                    automacao para entregar produtos confiaveis.
-                </p>
+                <p className="max-w-3xl text-muted-foreground">{about2}</p>
             </section>
 
         </>
