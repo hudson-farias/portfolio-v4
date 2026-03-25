@@ -7,8 +7,8 @@ import { HomePageData } from "./interfaces"
 
 
 const data: HomePageData = {
-  about: "Desenvolvedor de software com experiencia desde janeiro de 2021. Construo aplicacoes web focadas em performance, qualidade e manutencao.",
-  about2: "Atuo com desenvolvimento de software e tenho como base linguagenscomo Python, C#, TypeScript e PHP. Trabalho principalmente comFastAPI, Playwright, Next.js e Tailwind, unindo backend, frontend eautomacao para entregar produtos confiaveis.",
+  about: "Desenvolvedor de software com experiencia desde janeiro de 2021. Construo aplicacoes web focadas em performance, qualidade e manutenção.",
+  about2: "Atuo com desenvolvimento de software e tenho como base linguagens como Python, C#, TypeScript e PHP. Trabalho principalmente com FastAPI, Playwright, Next.js e Tailwind, unindo backend, frontend e automação para entregar produtos confiaveis.",
 
   languages: ["Python", "C#", "TypeScript", "PHP"],
   frameworks: ["FastAPI", "Playwright", "Next.js", "Tailwind CSS"],
