@@ -1,0 +1,135 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { ArrowRight, Download, MapPin } from "lucide-react"
+import { SocialIcon } from "@/components/icons/social-icon"
+import { Button } from "@/components/ui/button"
+import type { Profile, SocialNetwork } from "@/lib/types"
+
+const TYPE_MS = 100
+const DELETE_MS = 55
+const PAUSE_TYPED_MS = 1200
+const PAUSE_DELETED_MS = 300
+
+const TypingRoles = ({ roles }: { roles: string[] }) => {
+  const [roleIndex, setRoleIndex] = useState(0)
+  const [text, setText] = useState("")
+  const [deleting, setDeleting] = useState(false)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    const current = roles[roleIndex]
+
+    if (paused) {
+      const timeout = setTimeout(
+        () => {
+          setPaused(false)
+          if (text === current) setDeleting(true)
+        },
+        text === current ? PAUSE_TYPED_MS : PAUSE_DELETED_MS,
+      )
+      return () => clearTimeout(timeout)
+    }
+
+    const timeout = setTimeout(
+      () => {
+        if (!deleting) {
+          const next = current.slice(0, text.length + 1)
+          setText(next)
+          if (next === current) setPaused(true)
+        } else {
+          const next = current.slice(0, text.length - 1)
+          setText(next)
+          if (next === "") {
+            setDeleting(false)
+            setPaused(true)
+            setRoleIndex((i) => (i + 1) % roles.length)
+          }
+        }
+      },
+      deleting ? DELETE_MS : TYPE_MS,
+    )
+    return () => clearTimeout(timeout)
+  }, [text, deleting, roleIndex, roles, paused])
+
+  return (
+    <span className="text-2xl font-semibold tracking-tight md:text-3xl">
+      {text}
+      <span className="animate-pulse">|</span>
+    </span>
+  )
+}
+
+export const Hero = ({ profile, socialNetworks }: { profile: Profile; socialNetworks: SocialNetwork[] }) => {
+  const firstName = profile.name.split(" ")[0]
+
+  return (
+    <section id="hero" className="scroll-mt-28 space-y-10 pt-8 md:pt-14">
+      <div className="mx-auto max-w-4xl space-y-8">
+        {profile.available && (
+          <p className="surface inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-muted-foreground">
+            <span className="size-2 rounded-full bg-emerald-500" />
+            Disponível para freelas e oportunidades
+          </p>
+        )}
+
+        <div className="space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
+            Oi, eu sou {firstName}.
+          </h1>
+          <TypingRoles roles={profile.roles} />
+        </div>
+
+        <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">{profile.about}</p>
+
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="size-4" />
+            {profile.location}
+          </span>
+          {profile.available && (
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-emerald-500" />
+              Disponível agora
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <Button asChild size="lg" className="rounded-full px-6">
+            <a href="#contact">
+              Contratar
+              <ArrowRight />
+            </a>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="rounded-full px-6">
+            <a href={`mailto:${profile.email}?subject=Curriculum`}>
+              <Download />
+              Baixar CV
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      <div className="border-t pt-8">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-sm text-muted-foreground">Me siga:</span>
+          <div className="flex items-center gap-2">
+            {socialNetworks.map((network) => (
+              <a
+                key={network.id}
+                href={network.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="surface inline-flex size-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                aria-label={network.icon}
+              >
+                <SocialIcon icon={network.icon} className="size-4" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -1,77 +1,54 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import type { Profile, Stats } from "@/lib/types"
 
-export function About({about, about2}: {about: string, about2: string}) {
-    return (
-        <>
-            <section className="grid items-center gap-10 rounded-3xl border bg-card p-8 md:grid-cols-2 md:p-12">
-                <div className="space-y-6">
-                    <p className="w-fit rounded-full border px-3 py-1 text-sm text-muted-foreground">
-                        Disponivel para freelas e oportunidades
-                    </p>
-                    <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
-                        Oi, eu sou Hudson.
-                        <br />
-                        Software Developer.
-                    </h1>
-                    <p className="max-w-xl text-lg text-muted-foreground">{about}</p>
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild size="lg">
-                            <a
-                                href="https://gitlab.com/hudsonfarias"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Ver GitLab
-                            </a>
-                        </Button>
+const approachSteps = [
+  { step: "01", title: "Entender objetivos", description: "Mapear necessidades, contexto e metas do produto." },
+  { step: "02", title: "Desenvolver com qualidade", description: "Código limpo, arquitetura sólida e entregas incrementais." },
+  { step: "03", title: "Entregar e iterar", description: "Deploy, monitoramento e melhorias contínuas." },
+]
 
-                        <Button asChild size="lg">
-                            <a
-                                href="https://github.com/hudson-farias"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Ver GitHub
-                            </a>
-                        </Button>
+export const About = ({ profile, stats }: { profile: Profile; stats: Stats }) => {
+  return (
+    <section id="about" className="scroll-mt-28 space-y-12">
+      <div className="mx-auto max-w-3xl space-y-4 text-center">
+        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Sobre mim</h2>
+        <p className="text-lg leading-relaxed text-muted-foreground">{profile.aboutExtended}</p>
+      </div>
 
-                        <Button asChild size="lg" variant="outline">
-                            <a
-                                href="https://www.linkedin.com/in/hudsonfarias/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Falar comigo
-                            </a>
-                        </Button>
-                    </div>
-                </div>
-                <div className="rounded-2xl border bg-muted p-8">
-                    <p className="text-sm text-muted-foreground">Resumo profissional</p>
-                    <ul className="mt-5 space-y-3 text-sm">
-                        <li className="rounded-lg border bg-card px-3 py-2">
-                            Profissao: Software Developer
-                        </li>
-                        <li className="rounded-lg border bg-card px-3 py-2">
-                            Experiencia: desde janeiro de 2021
-                        </li>
-                        <li className="rounded-lg border bg-card px-3 py-2">
-                            Frameworks: FastAPI, Playwright, Next.js, Tailwind
-                        </li>
-                        <li className="rounded-lg border bg-card px-3 py-2">
-                            Outros: Git, SQL, NoSQL, Docker
-                        </li>
-                    </ul>
-                </div>
-            </section>
+      <div className="grid gap-4 md:grid-cols-3">
+        {approachSteps.map((item) => (
+          <article
+            key={item.step}
+            className="rounded-2xl surface p-6 transition-colors hover:border-foreground/20"
+          >
+            <span className="text-sm font-medium text-muted-foreground">{item.step}</span>
+            <h3 className="mt-2 text-lg font-semibold">{item.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+          </article>
+        ))}
+      </div>
 
-            <section id="about" className="scroll-mt-24 space-y-4">
-                <h2 className="text-2xl font-semibold tracking-tight">Sobre mim</h2>
-                <p className="max-w-3xl text-muted-foreground">{about2}</p>
-            </section>
-
-        </>
-    )
+      <div className="grid gap-6 border-t pt-10 sm:grid-cols-3">
+        <div className="text-center">
+          <p className="text-4xl font-bold tracking-tight">
+            {String(stats.yearsExperience).padStart(2, "0")}+
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Anos de experiência</p>
+        </div>
+        <div className="text-center">
+          <p className="text-4xl font-bold tracking-tight">
+            {String(stats.projectsCount).padStart(2, "0")}+
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Projetos concluídos</p>
+        </div>
+        <div className="text-center">
+          <p className="text-4xl font-bold tracking-tight">
+            {String(stats.clientsCount).padStart(2, "0")}+
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Clientes atendidos</p>
+        </div>
+      </div>
+    </section>
+  )
 }

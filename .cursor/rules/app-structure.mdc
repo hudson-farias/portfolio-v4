@@ -1,0 +1,68 @@
+---
+description: Estrutura de rotas — page/layout client e pasta components
+globs: "**/src/app/**/*.{tsx,ts}"
+alwaysApply: false
+---
+
+# Estrutura App Router
+
+## Client Components por rota
+
+Coloque `"use client"` nos arquivos colados à rota, não em `components/` genérico da rota:
+
+| Arquivo | Uso |
+|---------|-----|
+| `page.tsx` | Server Component — fetch, auth, passa props |
+| `page-client.tsx` | UI interativa da página (`AdminPageClient`, etc.) |
+| `layout.tsx` | Server Component — dados do layout, slots server |
+| `layout-client.tsx` | Shell client do layout (sidebar, providers) |
+
+```tsx
+// page.tsx — servidor
+import { AdminPageClient } from "./page-client"
+
+export default async function AdminPage() {
+  const data = await loadData()
+  return <AdminPageClient data={data} />
+}
+```
+
+```tsx
+// layout.tsx — servidor passa slot server para o client
+import { AdminLayoutClient } from "./layout-client"
+import { AdminAuthPanel } from "./auth-panel"
+
+export default async function AdminLayout({ children }) {
+  return (
+    <AdminLayoutClient authPanel={<AdminAuthPanel ... />}>
+      {children}
+    </AdminLayoutClient>
+  )
+}
+```
+
+## Pasta `components/` na rota
+
+Use `app/[rota]/components/` **somente** quando:
+
+- o mesmo componente é reutilizado em **várias** páginas daquela rota;
+- é um bloco compartilhado claramente separado (ex.: modal complexo usado em 2+ arquivos).
+
+Prefira arquivos colados à rota para o resto:
+
+- `auth-panel.tsx` — Server Component auxiliar do layout
+- `page-client.tsx` / `layout-client.tsx` — client da rota
+
+## Evitar
+
+- `components/foo-client.tsx` como substituto de `page-client.tsx`
+- `"use client"` em `page.tsx` ou `layout.tsx` sem necessidade
+- duplicar client boundary em vários arquivos pequenos na mesma rota
+
+## `src/components/`
+
+Reservado a UI **global** do projeto (`ui/button`, etc.), não a telas de uma rota específica.
+
+## Estilo
+
+Ver `preserve-vscode-edits.mdc` (não sobrescrever código editado no VS Code) e `components-style.mdc` (arrow functions, imports em uma linha).
