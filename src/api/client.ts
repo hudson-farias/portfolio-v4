@@ -4,11 +4,24 @@ const AUTH_COOKIE = 'ACCESS_TOKEN_ADMIN'
 
 class ApiClient {
   private baseURL: string
+  private _canMutate = false
+
   public loginUrl: string
 
   constructor() {
     this.baseURL = process.env.NEXT_PUBLIC_API_URL || ''
     this.loginUrl = `${this.baseURL}/auth/discord/redirect`
+  }
+
+  get isAuth() {
+    const cookies = nookies.get(null)
+    const token = cookies[AUTH_COOKIE]
+    return !!token
+  }
+
+  private clearToken() {
+    nookies.destroy(null, AUTH_COOKIE, { path: "/" })
+    this._canMutate = false
   }
 
   private headers(isForm: boolean = false): { [key: string]: string } {
@@ -26,34 +39,42 @@ class ApiClient {
     const headers = this.headers(isForm)
     const payload = isForm ? body : body !== undefined ? JSON.stringify(body) : undefined
 
-    return fetch(`${this.baseURL}${endpoint}`, {
+    const response = await fetch(`${this.baseURL}${endpoint}`, {
       method,
       headers,
       body: payload,
     })
+
+    if (response.status === 498) this.clearToken()
+    return response
   }
 
-  public get(endpoint: string): Promise<Response> {
+  async checkAuth(): Promise<boolean> {
+    await this.get("/auth/verify")
+    return this.isAuth
+  }
+
+  get(endpoint: string): Promise<Response> {
     return this.request("GET", endpoint)
   }
 
-  public post(endpoint: string, body: unknown): Promise<Response> {
+  post(endpoint: string, body: unknown): Promise<Response> {
     return this.request("POST", endpoint, body)
   }
 
-  public put(endpoint: string, body: unknown): Promise<Response> {
+  put(endpoint: string, body: unknown): Promise<Response> {
     return this.request("PUT", endpoint, body)
   }
 
-  public patch(endpoint: string, body: unknown): Promise<Response> {
+  patch(endpoint: string, body: unknown): Promise<Response> {
     return this.request("PATCH", endpoint, body)
   }
 
-  public delete(endpoint: string): Promise<Response> {
+  delete(endpoint: string): Promise<Response> {
     return this.request("DELETE", endpoint)
   }
 
-  public setToken(accessToken: string, redirect: string = "/admin") {
+  setToken(accessToken: string, redirect: string = "/admin") {
     nookies.set(null, AUTH_COOKIE, accessToken, {
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
@@ -62,15 +83,9 @@ class ApiClient {
     window.location.href = redirect
   }
 
-  public deleteToken(redirect: string = "/admin"): void {
-    nookies.destroy(null, AUTH_COOKIE, { path: "/" })
-
+  deleteToken(redirect: string = "/admin"): void {
+    this.clearToken()
     window.location.href = redirect
-  }
-
-  verify(): boolean {
-    const cookies = nookies.get(null)
-    return !!cookies[AUTH_COOKIE]
   }
 }
 

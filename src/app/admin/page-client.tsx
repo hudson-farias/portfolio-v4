@@ -1,33 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect } from "react"
 
 import { Briefcase, FolderGit2, Layers, Share2 } from "lucide-react"
 
 import type { PortfolioData } from "@/lib/types"
 
+import { useAdminAuth } from "@/contexts/admin-auth"
 import { StatCard } from "./components/stat-card"
 import { Section } from "./components/section"
-
 import { ExperiencesTable } from "./components/experiences-table"
 import { SkillsGrid } from "./components/skills-grid"
 import { ProjectsList } from "./components/projects-list"
 import { SocialNetworksTable } from "./components/social-networks-table"
 
-import { API } from "@/api/client"
-
-export function AdminPageClient({ data, canMutate }: { data: PortfolioData; canMutate: boolean }) {
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const queryToken = searchParams.get("token")
-
-    useEffect(() => {
-        if (!queryToken) return
-        API.setToken(queryToken)
-
-    }, [queryToken, router])
+export function AdminPageClient({ data }: { data: PortfolioData }) {
+    const { canMutate } = useAdminAuth()
 
     const skillsCount = data.skills.reduce((acc, cat) => acc + cat.skills.length, 0)
     const socialCount = data.socialNetworksHeader.length + data.socialNetworksFooter.length
@@ -66,9 +54,9 @@ export function AdminPageClient({ data, canMutate }: { data: PortfolioData; canM
                     description="Registros da tabela experiences"
                     icon={Briefcase}
                     canMutate={canMutate}
-                    onAdd={() => console.log("add experience")}
+                    href="/admin/experiences"
                 >
-                    <ExperiencesTable items={data.experiences} canMutate={canMutate} />
+                    <ExperiencesTable items={data.experiences} canMutate={false} />
                 </Section>
 
                 <Section
@@ -80,9 +68,9 @@ export function AdminPageClient({ data, canMutate }: { data: PortfolioData; canM
                     }
                     icon={FolderGit2}
                     canMutate={canMutate}
-                    onAdd={() => console.log("add project")}
+                    href="/admin/projects"
                 >
-                    <ProjectsList items={data.projects} canMutate={canMutate} />
+                    <ProjectsList items={data.projects} canMutate={false} />
                 </Section>
             </div>
 
@@ -91,9 +79,9 @@ export function AdminPageClient({ data, canMutate }: { data: PortfolioData; canM
                 description="Categorias e habilidades cadastradas"
                 icon={Layers}
                 canMutate={canMutate}
-                onAdd={() => console.log("add skill")}
+                href="/admin/skills"
             >
-                <SkillsGrid categories={data.skills} canMutate={canMutate} />
+                <SkillsGrid categories={data.skills} canMutate={false} />
             </Section>
 
             <Section
@@ -101,12 +89,12 @@ export function AdminPageClient({ data, canMutate }: { data: PortfolioData; canM
                 description="Links exibidos no header e footer"
                 icon={Share2}
                 canMutate={canMutate}
-                onAdd={() => console.log("add social network")}
+                href="/admin/social-networks"
             >
                 <SocialNetworksTable
                     header={data.socialNetworksHeader}
                     footer={data.socialNetworksFooter}
-                    canMutate={canMutate}
+                    canMutate={false}
                 />
             </Section>
 

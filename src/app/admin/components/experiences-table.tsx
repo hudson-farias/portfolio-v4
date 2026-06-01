@@ -1,8 +1,21 @@
+import type { AdminExperience } from "@/lib/admin-types"
 import type { Experience } from "@/lib/types"
 
 import { RowActions } from "./row-actions"
 
-export function ExperiencesTable({ items, canMutate, }: { items: Experience[]; canMutate: boolean }) {
+type ExperienceItem = AdminExperience | Experience
+
+export function ExperiencesTable({
+    items,
+    canMutate,
+    onEdit,
+    onDelete,
+}: {
+    items: ExperienceItem[]
+    canMutate: boolean
+    onEdit?: (item: ExperienceItem) => void
+    onDelete?: (id: number) => void
+}) {
     return (
         <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
@@ -12,6 +25,7 @@ export function ExperiencesTable({ items, canMutate, }: { items: Experience[]; c
                         <th className="pb-3 pr-4 font-medium">Cargo</th>
                         <th className="pb-3 pr-4 font-medium">Período</th>
                         <th className="pb-3 pr-4 font-medium">Descrição</th>
+                        {canMutate && <th className="pb-3 pr-4 font-medium">Status</th>}
                         {canMutate && <th className="pb-3 font-medium">Ações</th>}
                     </tr>
                 </thead>
@@ -23,11 +37,24 @@ export function ExperiencesTable({ items, canMutate, }: { items: Experience[]; c
                             <td className="py-3 pr-4 whitespace-nowrap text-zinc-500">{item.period}</td>
                             <td className="py-3 pr-4 text-zinc-600 dark:text-zinc-400">{item.description}</td>
                             {canMutate && (
+                                <td className="py-3 pr-4">
+                                    {item.hidden ? (
+                                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                                            Oculta
+                                        </span>
+                                    ) : (
+                                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+                                            Visível
+                                        </span>
+                                    )}
+                                </td>
+                            )}
+                            {canMutate && onEdit && onDelete && (
                                 <td className="py-3">
                                     <RowActions
                                         canMutate
-                                        onEdit={() => console.log("edit experience", item.id)}
-                                        onDelete={() => console.log("delete experience", item.id)}
+                                        onEdit={() => onEdit(item)}
+                                        onDelete={() => onDelete(item.id)}
                                     />
                                 </td>
                             )}

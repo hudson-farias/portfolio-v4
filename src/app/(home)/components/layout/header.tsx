@@ -44,7 +44,7 @@ export const Header = () => {
           className="flex size-10 shrink-0 items-center justify-center rounded-full surface text-sm font-bold"
           aria-label="Admin"
         >
-          hf
+          HF
         </Link>
 
         <nav className="surface hidden items-center gap-1 rounded-full p-1 backdrop-blur md:flex">

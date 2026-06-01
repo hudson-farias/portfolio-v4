@@ -15,6 +15,7 @@ export interface Experience {
   period: string
   role: string
   description: string
+  hidden?: boolean
 }
 
 export interface Project {

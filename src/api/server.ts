@@ -18,39 +18,38 @@ class ApiServer {
     }
   }
 
-  async request(method: string, endpoint: string, body?: unknown, requireAuth = false): Promise<Response> {
+  async request(method: string, endpoint: string, body?: unknown): Promise<Response> {
     const headers = await this.authHeaders()
-    if (requireAuth && !headers.Authorization) {
-      return new Response(null, { status: 401 })
-    }
 
-    return fetch(`${this.baseURL}${endpoint}`, {
+    const response = await fetch(`${this.baseURL}${endpoint}`, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       cache: "no-store",
     })
+
+    if (response.status === 498) {
+      const cookieStore = await cookies()
+      cookieStore.delete(AUTH_COOKIE)
+    }
+
+    return response
   }
 
-  get(endpoint: string, requireAuth = false): Promise<Response> {
-    return this.request("GET", endpoint, undefined, requireAuth)
+  get(endpoint: string): Promise<Response> {
+    return this.request("GET", endpoint)
   }
 
-  post(endpoint: string, body: unknown, requireAuth = true): Promise<Response> {
-    return this.request("POST", endpoint, body, requireAuth)
+  post(endpoint: string, body: unknown): Promise<Response> {
+    return this.request("POST", endpoint, body)
   }
 
-  put(endpoint: string, body: unknown, requireAuth = true): Promise<Response> {
-    return this.request("PUT", endpoint, body, requireAuth)
+  put(endpoint: string, body: unknown): Promise<Response> {
+    return this.request("PUT", endpoint, body)
   }
 
-  delete(endpoint: string, requireAuth = true): Promise<Response> {
-    return this.request("DELETE", endpoint, undefined, requireAuth)
-  }
-
-  async verify(): Promise<boolean> {
-    const response = await API.get('/auth/verify')
-    return response.status === 204
+  delete(endpoint: string): Promise<Response> {
+    return this.request("DELETE", endpoint)
   }
 }
 
