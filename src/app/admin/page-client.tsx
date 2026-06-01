@@ -4,7 +4,7 @@ import Link from "next/link"
 
 import { Briefcase, FolderGit2, Layers, Share2 } from "lucide-react"
 
-import type { PortfolioData } from "@/lib/types"
+import type { AdminDashboard } from "@/lib/admin-dashboard"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 import { StatCard } from "./components/stat-card"
@@ -14,11 +14,8 @@ import { SkillsGrid } from "./components/skills-grid"
 import { ProjectsList } from "./components/projects-list"
 import { SocialNetworksTable } from "./components/social-networks-table"
 
-export function AdminPageClient({ data }: { data: PortfolioData }) {
+export function AdminPageClient({ data }: { data: AdminDashboard }) {
     const { canMutate } = useAdminAuth()
-
-    const skillsCount = data.skills.reduce((acc, cat) => acc + cat.skills.length, 0)
-    const socialCount = data.socialNetworksHeader.length + data.socialNetworksFooter.length
 
     return (
         <div className="space-y-8 p-6 md:p-8">
@@ -42,10 +39,10 @@ export function AdminPageClient({ data }: { data: PortfolioData }) {
             </header>
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <StatCard label="Experiências" value={data.experiences.length} />
-                <StatCard label="Skills" value={skillsCount} />
-                <StatCard label="Projetos" value={data.projects.length} />
-                <StatCard label="Redes sociais" value={socialCount} />
+                <StatCard label="Experiências" value={data.counts.experiences} />
+                <StatCard label="Skills" value={data.counts.skills} />
+                <StatCard label="Projetos" value={data.counts.projects} />
+                <StatCard label="Redes sociais" value={data.counts.social_networks} />
             </div>
 
             <div className="grid gap-6 xl:grid-cols-2">
@@ -92,14 +89,13 @@ export function AdminPageClient({ data }: { data: PortfolioData }) {
                 href="/admin/social-networks"
             >
                 <SocialNetworksTable
-                    header={data.socialNetworksHeader}
-                    footer={data.socialNetworksFooter}
+                    header={data.social_networks_header}
+                    footer={data.social_networks_footer}
                     canMutate={false}
                 />
             </Section>
 
             <footer className="pb-4 text-center text-xs text-zinc-500">
-                Perfil: {data.profile.name} ·{" "}
                 <Link href="/" className="underline-offset-4 hover:underline">
                     Ver site público
                 </Link>

@@ -1,9 +1,10 @@
-import { getAdminPortfolioData } from "@/lib/data"
+import { API } from "@/api/server"
 
 import { AdminPageClient } from "./page-client"
 
 export default async function AdminPage() {
-  const data = await getAdminPortfolioData(false)
+  const response = await API.get("/admin")
+  const data = await response.json()
 
   return <AdminPageClient data={data} />
 }
