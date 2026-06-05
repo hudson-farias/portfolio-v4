@@ -38,7 +38,7 @@ export const Header = () => {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 md:px-6">
+    <header className="land-slide-down sticky top-0 z-50 px-4 pt-4 md:px-6">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
         <Link
           href="/admin"

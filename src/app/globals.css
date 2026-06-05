@@ -142,3 +142,76 @@
     box-shadow: var(--surface-shadow);
   }
 }
+
+@keyframes land-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes land-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes land-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .land-fade-up {
+    animation: land-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .land-fade-in {
+    animation: land-fade-in 0.55s ease-out both;
+  }
+
+  .land-slide-down {
+    animation: land-slide-down 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .land-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .land-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .land-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .land-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .land-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .land-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .land-delay-700 {
+    animation-delay: 700ms;
+  }
+}

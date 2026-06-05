@@ -66,6 +66,42 @@ export interface SocialNetworksResponse {
   social_networks_footer: SocialNetwork[]
 }
 
+export interface ContactMethod {
+  type: string
+  value: string
+}
+
+export interface ContactResponse {
+  email: string
+  others: ContactMethod[]
+}
+
+export interface HeroProfile {
+  name: string
+  roles: string[]
+  location: string
+  email: string
+  about: string
+  available: boolean
+}
+
+export interface HeroResponse {
+  profile: HeroProfile
+  social_networks: SocialNetwork[]
+}
+
+export interface ExperiencesResponse {
+  experiences: Experience[]
+}
+
+export interface SkillsResponse {
+  skills: SkillCategory[]
+}
+
+export interface ProjectsResponse {
+  projects: Project[]
+}
+
 export interface ApiResponse {
   skills: SkillCategory[]
   experiences: Experience[]

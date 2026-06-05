@@ -1,53 +1,49 @@
 "use client"
 
-import type { Profile, Stats } from "@/lib/types"
+import { AppIcon } from "@/components/icons/app-icon"
+import { Reveal } from "../reveal"
+import type { Profile, SocialNetwork, Stats } from "@/lib/types"
 
-const approachSteps = [
-  { step: "01", title: "Entender objetivos", description: "Mapear necessidades, contexto e metas do produto." },
-  { step: "02", title: "Desenvolver com qualidade", description: "Código limpo, arquitetura sólida e entregas incrementais." },
-  { step: "03", title: "Entregar e iterar", description: "Deploy, monitoramento e melhorias contínuas." },
-]
-
-export const About = ({ profile, stats }: { profile: Profile; stats: Stats }) => {
+export const About = ({ profile, stats, socialNetworks }: { profile: Profile; stats: Stats; socialNetworks: SocialNetwork[] }) => {
   return (
     <section id="about" className="scroll-mt-28 space-y-12">
-      <div className="mx-auto max-w-3xl space-y-4 text-center">
+      <Reveal className="mx-auto max-w-3xl space-y-4 text-center">
         <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Sobre mim</h2>
         <p className="text-lg leading-relaxed text-muted-foreground">{profile.aboutExtended}</p>
+      </Reveal>
+
+      <div className="flex flex-wrap items-center justify-center gap-4 border-b pb-10">
+        <Reveal variant="fade">
+          <span className="text-sm text-muted-foreground">Me siga:</span>
+        </Reveal>
+        <div className="flex items-center gap-2">
+          {socialNetworks.map((network, i) => (
+            <Reveal key={network.id} as="span" variant="scale" delay={i * 80}>
+              <a
+                href={network.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="surface inline-flex size-10 items-center justify-center rounded-full text-muted-foreground transition-[transform,colors] hover:-translate-y-0.5 hover:border-foreground/20 hover:text-foreground"
+                aria-label={network.icon}
+              >
+                <AppIcon name={network.icon} className="size-4" />
+              </a>
+            </Reveal>
+          ))}
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {approachSteps.map((item) => (
-          <article
-            key={item.step}
-            className="rounded-2xl surface p-6 transition-colors hover:border-foreground/20"
-          >
-            <span className="text-sm font-medium text-muted-foreground">{item.step}</span>
-            <h3 className="mt-2 text-lg font-semibold">{item.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-          </article>
+      <div className="grid gap-6 pt-10 sm:grid-cols-3">
+        {[
+          { value: `${String(stats.yearsExperience).padStart(2, "0")}+`, label: "Anos de experiência" },
+          { value: `${String(stats.projectsCount).padStart(2, "0")}+`, label: "Projetos concluídos" },
+          { value: `${String(stats.clientsCount).padStart(2, "0")}+`, label: "Clientes atendidos" },
+        ].map((stat, i) => (
+          <Reveal key={stat.label} variant="scale" delay={i * 100} className="text-center">
+            <p className="text-4xl font-bold tracking-tight">{stat.value}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+          </Reveal>
         ))}
-      </div>
-
-      <div className="grid gap-6 border-t pt-10 sm:grid-cols-3">
-        <div className="text-center">
-          <p className="text-4xl font-bold tracking-tight">
-            {String(stats.yearsExperience).padStart(2, "0")}+
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">Anos de experiência</p>
-        </div>
-        <div className="text-center">
-          <p className="text-4xl font-bold tracking-tight">
-            {String(stats.projectsCount).padStart(2, "0")}+
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">Projetos concluídos</p>
-        </div>
-        <div className="text-center">
-          <p className="text-4xl font-bold tracking-tight">
-            {String(stats.clientsCount).padStart(2, "0")}+
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">Clientes atendidos</p>
-        </div>
       </div>
     </section>
   )

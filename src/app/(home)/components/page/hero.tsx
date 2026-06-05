@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { ArrowRight, Download, MapPin } from "lucide-react"
-import { SocialIcon } from "@/components/icons/social-icon"
 import { Button } from "@/components/ui/button"
-import type { Profile, SocialNetwork } from "@/lib/types"
+import type { HeroProfile } from "@/lib/types"
 
 const TYPE_MS = 100
 const DELETE_MS = 55
@@ -60,29 +59,33 @@ const TypingRoles = ({ roles }: { roles: string[] }) => {
   )
 }
 
-export const Hero = ({ profile, socialNetworks }: { profile: Profile; socialNetworks: SocialNetwork[] }) => {
+export const Hero = ({ profile }: { profile: HeroProfile }) => {
   const firstName = profile.name.split(" ")[0]
 
   return (
     <section id="hero" className="scroll-mt-28 space-y-10 pt-8 md:pt-14">
       <div className="mx-auto max-w-4xl space-y-8">
         {profile.available && (
-          <p className="surface inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-muted-foreground">
-            <span className="size-2 rounded-full bg-emerald-500" />
+          <p className="surface land-fade-up inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-muted-foreground">
+            <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
             Disponível para freelas e oportunidades
           </p>
         )}
 
         <div className="space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
+          <h1 className="land-fade-up land-delay-100 text-4xl font-bold tracking-tight md:text-6xl">
             Oi, eu sou {firstName}.
           </h1>
-          <TypingRoles roles={profile.roles} />
+          <div className="land-fade-up land-delay-200">
+            <TypingRoles roles={profile.roles} />
+          </div>
         </div>
 
-        <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">{profile.about}</p>
+        <p className="land-fade-up land-delay-300 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          {profile.about}
+        </p>
 
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+        <div className="land-fade-up land-delay-400 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <MapPin className="size-4" />
             {profile.location}
@@ -95,39 +98,19 @@ export const Hero = ({ profile, socialNetworks }: { profile: Profile; socialNetw
           )}
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <Button asChild size="lg" className="rounded-full px-6">
+        <div className="land-fade-up land-delay-500 flex flex-wrap gap-3">
+          <Button asChild size="lg" className="rounded-full px-6 transition-transform hover:scale-[1.02]">
             <a href="#contact">
               Contratar
               <ArrowRight />
             </a>
           </Button>
-          <Button asChild size="lg" variant="outline" className="rounded-full px-6">
+          <Button asChild size="lg" variant="outline" className="rounded-full px-6 transition-transform hover:scale-[1.02]">
             <a href={`mailto:${profile.email}?subject=Curriculum`}>
               <Download />
               Baixar CV
             </a>
           </Button>
-        </div>
-      </div>
-
-      <div className="border-t pt-8">
-        <div className="flex flex-wrap items-center gap-4">
-          <span className="text-sm text-muted-foreground">Me siga:</span>
-          <div className="flex items-center gap-2">
-            {socialNetworks.map((network) => (
-              <a
-                key={network.id}
-                href={network.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="surface inline-flex size-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                aria-label={network.icon}
-              >
-                <SocialIcon icon={network.icon} className="size-4" />
-              </a>
-            ))}
-          </div>
         </div>
       </div>
     </section>

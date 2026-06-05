@@ -12,6 +12,9 @@ import { AlertBanner } from "../components/alert-banner"
 import { Field, SelectInput, TextInput } from "../components/form-fields"
 import { FormModal } from "../components/form-modal"
 import { PageHeader } from "../components/page-header"
+import { AppIcon } from "@/components/icons/app-icon"
+import { skillIconNames } from "@/components/icons/map"
+import { IconSelect } from "../components/icon-select"
 import { RowActions } from "../components/row-actions"
 
 const emptyForm = {
@@ -105,8 +108,7 @@ export function SkillsPageClient({ initialData }: { initialData: AdminSkills }) 
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
-                  <th className="pb-3 pr-4 font-medium">Nome</th>
-                  <th className="pb-3 pr-4 font-medium">Ícone</th>
+                  <th className="pb-3 pr-4 font-medium">Skill</th>
                   <th className="pb-3 pr-4 font-medium">Categoria</th>
                   {canMutate && <th className="pb-3 font-medium">Ações</th>}
                 </tr>
@@ -118,8 +120,12 @@ export function SkillsPageClient({ initialData }: { initialData: AdminSkills }) 
                       key={skill.id}
                       className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/80"
                     >
-                      <td className="py-3 pr-4 font-medium">{skill.name}</td>
-                      <td className="py-3 pr-4 font-mono text-xs">{skill.icon}</td>
+                      <td className="py-3 pr-4">
+                        <span className="inline-flex items-center gap-2.5 font-medium">
+                          <AppIcon name={skill.icon} className="size-4 shrink-0" />
+                          {skill.name}
+                        </span>
+                      </td>
                       <td className="py-3 pr-4 text-zinc-500">{category.title}</td>
                       {canMutate && (
                         <td className="py-3">
@@ -154,11 +160,11 @@ export function SkillsPageClient({ initialData }: { initialData: AdminSkills }) 
           />
         </Field>
         <Field label="Ícone">
-          <TextInput
+          <IconSelect
             required
-            placeholder="Ex: react, typescript"
+            options={skillIconNames}
             value={form.icon}
-            onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
+            onChange={(icon) => setForm((f) => ({ ...f, icon }))}
           />
         </Field>
         <Field label="Categoria">

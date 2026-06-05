@@ -1,148 +1,339 @@
 "use client"
 
-import { useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
-import { GithubIcon } from "@/components/icons/social-icon"
+import { Reveal } from "../reveal"
+import { AppIcon } from "@/components/icons/app-icon"
 import { Button } from "@/components/ui/button"
 import type { Project } from "@/lib/types"
 
+const GAP_PX = 16
+const TRAILING_PX = 32
+
+function ProjectCard({
+  project,
+  cardWidth,
+  interactive = true,
+}: {
+  project: Project
+  cardWidth: number
+  interactive?: boolean
+}) {
+  return (
+    <article
+      data-project-card
+      style={{ width: cardWidth > 0 ? cardWidth : undefined }}
+      className={`relative z-0 flex min-h-[280px] flex-none snap-start flex-col overflow-hidden rounded-2xl surface transition-[transform,colors,box-shadow] duration-300 ease-out sm:min-h-[320px] ${
+        interactive
+          ? "hover:z-10 hover:scale-[1.03] hover:-translate-y-1 hover:border-foreground/20 hover:shadow-lg"
+          : ""
+      }`}
+      aria-hidden={interactive ? undefined : true}
+      tabIndex={interactive ? undefined : -1}
+    >
+      {project.image_url ? (
+        <div className="relative aspect-video w-full overflow-hidden border-b bg-muted/20">
+          <img
+            src={project.image_url}
+            alt={`Preview do projeto ${project.name}`}
+            className="size-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ) : null}
+
+      <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+        <div className="space-y-2 sm:space-y-3">
+          <h3 className="text-lg font-semibold sm:text-xl">{project.name}</h3>
+          <p className="line-clamp-4 text-sm leading-relaxed text-muted-foreground">
+            {project.description || "Sem descrição."}
+          </p>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-3 sm:mt-6">
+          {project.html_url && (
+            <a
+              href={project.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              tabIndex={interactive ? undefined : -1}
+              className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:underline"
+            >
+              <AppIcon name="github" className="size-4" />
+              Repositório
+            </a>
+          )}
+          {project.homepage && (
+            <a
+              href={project.homepage}
+              target="_blank"
+              rel="noopener noreferrer"
+              tabIndex={interactive ? undefined : -1}
+              className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:underline"
+            >
+              <ExternalLink className="size-4" />
+              Demo
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  )
+}
+
 export const Projects = ({ projects }: { projects: Project[] }) => {
-  const [projectActive, setProjectActive] = useState(0)
+  const [activePage, setActivePage] = useState(0)
+  const [pageWidth, setPageWidth] = useState(0)
+  const [cardWidth, setCardWidth] = useState(0)
+  const [cardsPerView, setCardsPerView] = useState(1.5)
+  const [fitsAll, setFitsAll] = useState(false)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const cloneOffsetRef = useRef(0)
+  const isLoopingRef = useRef(false)
 
-  const totalProjects = projects.length
+  const total = projects.length
+  const cloneCount = Math.min(total, Math.ceil(cardsPerView))
 
-  const cardWidth = useMemo(() => {
-    if (!carouselRef.current) return 360
-    const firstCard = carouselRef.current.querySelector<HTMLElement>("[data-project-card]")
-    if (!firstCard) return 360
-    return firstCard.offsetWidth + 16
-  }, [projects.length])
+  const measure = useCallback(() => {
+    const container = carouselRef.current
+    if (!container) return
 
-  const goToProject = (index: number) => {
+    const viewport = container.clientWidth
+    const perView = viewport < 640 ? 1.2 : 1.5
+    const gaps = Math.floor(perView) * GAP_PX
+    const card = (viewport - gaps) / perView
+
+    setCardsPerView(perView)
+    setPageWidth(viewport)
+    setCardWidth(card)
+    cloneOffsetRef.current = total * card + Math.max(0, total - 1) * GAP_PX
+    setFitsAll(container.scrollWidth <= container.clientWidth + 1)
+  }, [total])
+
+  const trackWidth =
+    total * cardWidth + Math.max(0, total - 1) * GAP_PX + TRAILING_PX
+  const totalPages =
+    pageWidth > 0 && trackWidth > 0
+      ? Math.max(1, Math.ceil((trackWidth - pageWidth) / pageWidth) + 1)
+      : 1
+
+  useEffect(() => {
+    measure()
+    const container = carouselRef.current
+    if (!container) return
+    const ro = new ResizeObserver(measure)
+    ro.observe(container)
+    return () => ro.disconnect()
+  }, [measure, total])
+
+  useEffect(() => {
+    if (activePage >= totalPages) {
+      setActivePage(Math.max(0, totalPages - 1))
+    }
+  }, [activePage, totalPages])
+
+  const getScrollLeftForPage = useCallback(
+    (page: number) => {
+      const container = carouselRef.current
+      if (!container || !pageWidth || !cardWidth) return 0
+
+      const clamped = Math.max(0, Math.min(page, totalPages - 1))
+      const maxScroll = Math.max(0, trackWidth - pageWidth)
+
+      if (clamped === totalPages - 1) return maxScroll
+      return Math.min(clamped * pageWidth, maxScroll)
+    },
+    [cardWidth, pageWidth, totalPages, trackWidth],
+  )
+
+  const resetLoopScroll = useCallback(() => {
+    const container = carouselRef.current
+    if (!container) return
+    container.scrollLeft = 0
+    isLoopingRef.current = false
+  }, [])
+
+  const goToPage = (page: number) => {
     if (!carouselRef.current) return
-    const clamped = Math.max(0, Math.min(index, totalProjects - 1))
-    carouselRef.current.scrollTo({ left: clamped * cardWidth, behavior: "smooth" })
-    setProjectActive(clamped)
+    const clamped = Math.max(0, Math.min(page, totalPages - 1))
+    carouselRef.current.scrollTo({
+      left: getScrollLeftForPage(clamped),
+      behavior: "smooth",
+    })
+    setActivePage(clamped)
   }
 
-  const goNext = () => goToProject(projectActive + 1)
-  const goPrevious = () => goToProject(projectActive - 1)
+  const loopToStart = () => {
+    const container = carouselRef.current
+    if (!container || !cloneOffsetRef.current) return
+
+    isLoopingRef.current = true
+    setActivePage(0)
+
+    const onScrollEnd = () => {
+      if (container.scrollLeft >= cloneOffsetRef.current - 4) {
+        resetLoopScroll()
+      }
+      container.removeEventListener("scrollend", onScrollEnd)
+    }
+
+    container.addEventListener("scrollend", onScrollEnd)
+    window.setTimeout(() => {
+      if (isLoopingRef.current && container.scrollLeft >= cloneOffsetRef.current - 4) {
+        resetLoopScroll()
+      }
+      container.removeEventListener("scrollend", onScrollEnd)
+    }, 700)
+
+    container.scrollTo({ left: cloneOffsetRef.current, behavior: "smooth" })
+  }
+
+  const loopToEnd = () => {
+    const container = carouselRef.current
+    if (!container || !pageWidth) return
+
+    const target = getScrollLeftForPage(totalPages - 1)
+    isLoopingRef.current = true
+    setActivePage(totalPages - 1)
+
+    const onScrollEnd = () => {
+      isLoopingRef.current = false
+      container.removeEventListener("scrollend", onScrollEnd)
+    }
+
+    container.addEventListener("scrollend", onScrollEnd)
+    window.setTimeout(() => {
+      isLoopingRef.current = false
+      container.removeEventListener("scrollend", onScrollEnd)
+    }, 700)
+
+    container.scrollTo({ left: target, behavior: "smooth" })
+  }
+
+  const goNext = () => {
+    if (activePage >= totalPages - 1) loopToStart()
+    else goToPage(activePage + 1)
+  }
+
+  const goPrevious = () => {
+    if (activePage <= 0) loopToEnd()
+    else goToPage(activePage - 1)
+  }
 
   const onCarouselScroll = () => {
-    if (!carouselRef.current) return
-    const nextActive = Math.round(carouselRef.current.scrollLeft / cardWidth)
-    const clamped = Math.max(0, Math.min(nextActive, totalProjects - 1))
-    if (clamped !== projectActive) setProjectActive(clamped)
+    if (!carouselRef.current || !pageWidth || isLoopingRef.current) return
+
+    const { scrollLeft } = carouselRef.current
+    let nearest = 0
+    let minDistance = Infinity
+
+    for (let page = 0; page < totalPages; page++) {
+      const target = getScrollLeftForPage(page)
+      const distance = Math.abs(scrollLeft - target)
+      if (distance < minDistance) {
+        minDistance = distance
+        nearest = page
+      }
+    }
+
+    if (nearest !== activePage) setActivePage(nearest)
   }
 
-  if (projects.length === 0) {
+  if (total === 0) {
     return (
-      <section id="projects" className="scroll-mt-28 space-y-6">
-        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Projetos</h2>
-        <p className="text-muted-foreground">Em breve novos projetos por aqui.</p>
+      <section id="projects" className="scroll-mt-28 space-y-10">
+        <Reveal className="mx-auto max-w-2xl space-y-3 text-center">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Projetos</h2>
+          <p className="text-muted-foreground">Em breve novos projetos por aqui.</p>
+        </Reveal>
       </section>
     )
   }
 
+  const showControls = !fitsAll && totalPages > 1
+
   return (
-    <section id="projects" className="scroll-mt-28 space-y-8">
-      <div className="flex items-end justify-between gap-4">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Projetos</h2>
-          <p className="text-muted-foreground">Seleção de trabalhos recentes.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            className="rounded-full"
-            onClick={goPrevious}
-            disabled={projectActive <= 0}
-            aria-label="Projeto anterior"
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            className="rounded-full"
-            onClick={goNext}
-            disabled={projectActive >= totalProjects - 1}
-            aria-label="Próximo projeto"
-          >
-            <ChevronRight />
-          </Button>
-        </div>
-      </div>
+    <section id="projects" className="scroll-mt-28 space-y-10">
+      <Reveal className="mx-auto max-w-2xl space-y-3 text-center">
+        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Projetos</h2>
+        <p className="text-muted-foreground">Seleção de trabalhos recentes.</p>
+      </Reveal>
 
-      <div
-        ref={carouselRef}
-        onScroll={onCarouselScroll}
-        className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        aria-label="Carrossel de projetos"
-      >
-        <div className="flex gap-4 pb-2 snap-x snap-mandatory">
-          {projects.map((project) => (
-            <article
-              key={project.id}
-              data-project-card
-              className="flex min-h-[220px] min-w-[280px] flex-none snap-start flex-col justify-between rounded-2xl surface p-6 transition-colors hover:border-foreground/20 sm:min-w-[340px] md:min-w-[380px]"
+      <Reveal delay={120} className="relative px-10 sm:px-12">
+        {showControls && (
+          <>
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              className="absolute top-1/2 left-0 z-20 -translate-y-1/2 rounded-full bg-background shadow-sm"
+              onClick={goPrevious}
+              aria-label="Página anterior"
             >
-              <div className="space-y-3">
-                <h3 className="text-xl font-semibold">{project.name}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {project.description || "Sem descrição."}
-                </p>
-              </div>
+              <ChevronLeft />
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              className="absolute top-1/2 right-0 z-20 -translate-y-1/2 rounded-full bg-background shadow-sm"
+              onClick={goNext}
+              aria-label="Próxima página"
+            >
+              <ChevronRight />
+            </Button>
+          </>
+        )}
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                {project.html_url && (
-                  <a
-                    href={project.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
-                  >
-                    <GithubIcon className="size-4" />
-                    Repositório
-                  </a>
-                )}
-                {project.homepage && (
-                  <a
-                    href={project.homepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
-                  >
-                    <ExternalLink className="size-4" />
-                    Demo
-                  </a>
-                )}
-              </div>
-            </article>
-          ))}
+        <div
+          ref={carouselRef}
+          onScroll={onCarouselScroll}
+          className="overflow-x-auto scroll-px-4 px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] sm:scroll-px-6 sm:px-6 [&::-webkit-scrollbar]:hidden"
+          aria-label="Carrossel de projetos"
+        >
+          <div className="flex w-max gap-4 pr-8 snap-x snap-mandatory">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} cardWidth={cardWidth} />
+            ))}
+            {projects.slice(0, cloneCount).map((project, i) => (
+              <ProjectCard
+                key={`${project.id}-clone-${i}`}
+                project={project}
+                cardWidth={cardWidth}
+                interactive={false}
+              />
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-center justify-center gap-2">
-        {projects.map((project, i) => (
-          <button
-            key={project.id}
-            type="button"
-            onClick={() => goToProject(i)}
-            className={`h-2.5 rounded-full transition-all ${
-              i === projectActive
-                ? "w-6 bg-primary"
-                : "w-2.5 bg-muted-foreground/40 hover:bg-muted-foreground/70"
-            }`}
-            aria-label={`Ir para projeto ${project.name}`}
-            aria-current={i === projectActive}
-          />
-        ))}
-      </div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-10 z-10 w-10 bg-gradient-to-r from-background to-transparent sm:left-12"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-10 z-10 w-10 bg-gradient-to-l from-background to-transparent sm:right-12"
+        />
+      </Reveal>
+
+      {showControls && (
+        <Reveal delay={200} className="mt-6 flex items-center justify-center gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goToPage(i)}
+              className={`h-2.5 rounded-full transition-all ${
+                i === activePage
+                  ? "w-6 bg-primary"
+                  : "w-2.5 bg-muted-foreground/40 hover:bg-muted-foreground/70"
+              }`}
+              aria-label={`Ir para página ${i + 1} de projetos`}
+              aria-current={i === activePage}
+            />
+          ))}
+        </Reveal>
+      )}
     </section>
   )
 }

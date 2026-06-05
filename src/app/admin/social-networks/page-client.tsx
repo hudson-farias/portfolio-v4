@@ -10,8 +10,11 @@ import type { AdminSocialNetwork } from "@/lib/admin-types"
 import { useAdminAuth } from "@/contexts/admin-auth"
 import { AlertBanner } from "../components/alert-banner"
 import { CheckboxField, Field, TextInput } from "../components/form-fields"
+import { IconSelect } from "../components/icon-select"
 import { FormModal } from "../components/form-modal"
 import { PageHeader } from "../components/page-header"
+import { AppIcon } from "@/components/icons/app-icon"
+import { socialIconNames } from "@/components/icons/map"
 import { RowActions } from "../components/row-actions"
 
 const emptyForm = {
@@ -129,7 +132,9 @@ export function SocialNetworksPageClient({ initialItems }: { initialItems: Admin
                     key={item.id}
                     className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/80"
                   >
-                    <td className="py-3 pr-4 font-mono text-xs">{item.icon}</td>
+                    <td className="py-3 pr-4">
+                      <AppIcon name={item.icon} className="size-4" />
+                    </td>
                     <td className="py-3 pr-4">
                       <a
                         href={item.url}
@@ -180,11 +185,11 @@ export function SocialNetworksPageClient({ initialItems }: { initialItems: Admin
           />
         </Field>
         <Field label="Ícone">
-          <TextInput
+          <IconSelect
             required
-            placeholder="Ex: github, linkedin"
+            options={socialIconNames}
             value={form.icon}
-            onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
+            onChange={(icon) => setForm((f) => ({ ...f, icon }))}
           />
         </Field>
         <div className="flex flex-wrap gap-4">
