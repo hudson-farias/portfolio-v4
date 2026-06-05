@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { SiteLogo } from "@/components/icons/site-logo"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -41,10 +42,10 @@ export const Header = () => {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
         <Link
           href="/admin"
-          className="flex size-10 shrink-0 items-center justify-center rounded-full surface text-sm font-bold"
+          className="flex shrink-0 items-center transition-opacity hover:opacity-85"
           aria-label="Admin"
         >
-          HF
+          <SiteLogo className="h-8" />
         </Link>
 
         <nav className="surface hidden items-center gap-1 rounded-full p-1 backdrop-blur md:flex">
