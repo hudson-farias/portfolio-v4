@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfólio — Hudson Farias
 
-## Getting Started
+Meu site pessoal. Aqui apresento quem sou, o que faço e como me encontrar — uma vitrine profissional em página única, pensada para quem quer conhecer minha trajetória em poucos segundos.
 
-First, run the development server:
+## O que é
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Construí um portfólio moderno em página única, com navegação por seções e conteúdo carregado dinamicamente a partir de uma API dedicada. Priorizei clareza na apresentação: sem excesso de informação, destacando experiência, habilidades e projetos de forma objetiva.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Seções
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Seção | O que mostro |
+|-------|--------------|
+| **Hero** | Minha apresentação com efeito de digitação nos cargos, localização, disponibilidade e CTAs para contratação e download do CV |
+| **Sobre** | Texto sobre mim, redes sociais e números da minha trajetória (anos de experiência, projetos, clientes) |
+| **Skills** | Minhas habilidades organizadas por categoria, com ícones |
+| **Experiências** | Linha do tempo da minha carreira — empresas, períodos e descrições |
+| **Projetos** | Carrossel interativo com repositórios do GitHub — preview, descrição e links |
+| **Contato** | Meu e-mail e canais para conversa |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Destaques
 
-## Learn More
+- **Tema claro e escuro** — respeito a preferência do sistema ou deixo o visitante escolher manualmente
+- **Animações sutis** — entrada progressiva dos blocos e interações no carrossel de projetos
+- **Painel administrativo** — área interna onde visualizo e gerencio o conteúdo do portfólio (experiências, skills, projetos e redes sociais), com login via Discord
+- **Responsivo** — adaptei o layout de mobile a desktop, com tipografia Geist e componentes shadcn/ui
 
-To learn more about Next.js, take a look at the following resources:
+## Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Next.js · React · TypeScript · Tailwind CSS · shadcn/ui
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Relação com a API
 
-## Deploy on Vercel
+Consumo o backend [portfolio-api](https://api.hudsondev.tech/), que centraliza meu perfil, experiências, habilidades, projetos (via GitHub) e redes sociais. No site público exibo apenas o que liberei; no painel admin vejo dados adicionais quando estou autenticado.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Hudson Farias** — Software Developer · Fullstack Engineer · DevOps
