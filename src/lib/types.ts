@@ -9,11 +9,14 @@ export interface SkillCategory {
   skills: Skill[]
 }
 
+export type ContractType = "CLT" | "PJ" | "FREELANCER"
+
 export interface Experience {
   id: number
   company: string
   period: string
   role: string
+  contract_type?: ContractType | null
   description: string
   hidden?: boolean
 }
@@ -41,7 +44,7 @@ export interface Profile {
   email: string
   phone: string
   about: string
-  aboutExtended: string
+  about_extended: string
   available: boolean
 }
 
@@ -100,6 +103,26 @@ export interface SkillsResponse {
 
 export interface ProjectsResponse {
   projects: Project[]
+}
+
+export interface AboutResponse {
+  profile: {
+    about_extended: string
+  }
+  stats: {
+    years_experience: number
+    projects_count: number
+    clients_count: number
+  }
+}
+
+export interface LandpageResponse {
+  about: AboutResponse
+  contact: ContactResponse
+  experiences: ExperiencesResponse
+  hero: HeroResponse
+  projects: ProjectsResponse
+  skills: SkillsResponse
 }
 
 export interface ApiResponse {

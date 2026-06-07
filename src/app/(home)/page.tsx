@@ -6,49 +6,27 @@ import { Experiences } from "./components/page/experiences"
 import { Hero } from "./components/page/hero"
 import { Projects } from "./components/page/projects"
 import { Skills } from "./components/page/skills"
-import { getPortfolioData } from "@/lib/data"
+import type { LandpageResponse } from "@/lib/types"
 
-import type { ContactResponse, ExperiencesResponse, HeroResponse, ProjectsResponse, SkillsResponse } from "@/lib/types"
-
-async function getHero(): Promise<HeroResponse> {
-  const response = await API.get("/hero")
-  return response.json()
-}
-
-async function getContact(): Promise<ContactResponse> {
-  const response = await API.get("/contact")
-  return response.json()
-}
-
-async function getExperiences(): Promise<ExperiencesResponse> {
-  const response = await API.get("/experience")
-  return response.json()
-}
-
-async function getSkills(): Promise<SkillsResponse> {
-  const response = await API.get("/skills")
-  return response.json()
-}
-
-async function getProjects(): Promise<ProjectsResponse> {
-  const response = await API.get("/projects")
+async function getLandpage(): Promise<LandpageResponse> {
+  const response = await API.get("/landpage")
   return response.json()
 }
 
 export default async function Home() {
-  const [data, hero, contact, experiences, skills, projects] = await Promise.all([
-    getPortfolioData(),
-    getHero(),
-    getContact(),
-    getExperiences(),
-    getSkills(),
-    getProjects(),
-  ])
+  const { hero, about, contact, experiences, skills, projects } = await getLandpage()
+
+  const aboutProfile = { aboutExtended: about.profile.about_extended }
+  const aboutStats = {
+    yearsExperience: about.stats.years_experience,
+    projectsCount: about.stats.projects_count,
+    clientsCount: about.stats.clients_count,
+  }
 
   return (
     <>
       <Hero profile={hero.profile} />
-      <About profile={data.profile} stats={data.stats} socialNetworks={hero.social_networks} />
+      <About profile={aboutProfile} stats={aboutStats} socialNetworks={hero.social_networks} />
       <Skills categories={skills.skills} />
       <Experiences experiences={experiences.experiences} />
       <Projects projects={projects.projects} />

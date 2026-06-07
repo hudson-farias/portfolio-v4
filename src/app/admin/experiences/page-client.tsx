@@ -5,25 +5,38 @@ import { useEffect, useState } from "react"
 import { Briefcase } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminExperience } from "@/lib/admin-types"
+import type { AdminExperience, AdminRole, ContractType } from "@/lib/admin-types"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 
 import { AlertBanner } from "../components/alert-banner"
-import { CheckboxField, Field, TextArea, TextInput } from "../components/form-fields"
+import { CheckboxField, Field, SelectInput, TextArea, TextInput } from "../components/form-fields"
 import { FormModal } from "../components/form-modal"
 import { PageHeader } from "../components/page-header"
 import { ExperiencesTable } from "../components/experiences-table"
 
+const CONTRACT_TYPES: { value: ContractType; label: string }[] = [
+  { value: "CLT", label: "CLT" },
+  { value: "PJ", label: "PJ" },
+  { value: "FREELANCER", label: "Freelancer" },
+]
+
 const emptyForm = {
   company: "",
   period: "",
-  role: "",
+  role_id: "" as string,
+  contract_type: "" as string,
   description: "",
   hidden: false,
 }
 
-export function ExperiencesPageClient({ initialItems }: { initialItems: AdminExperience[] }) {
+export function ExperiencesPageClient({
+  initialItems,
+  roles,
+}: {
+  initialItems: AdminExperience[]
+  roles: AdminRole[]
+}) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [items, setItems] = useState(initialItems)
@@ -38,7 +51,10 @@ export function ExperiencesPageClient({ initialItems }: { initialItems: AdminExp
 
   function openCreate() {
     setEditingId(null)
-    setForm(emptyForm)
+    setForm({
+      ...emptyForm,
+      role_id: roles[0] ? String(roles[0].id) : "",
+    })
     setModalOpen(true)
   }
 
@@ -47,11 +63,23 @@ export function ExperiencesPageClient({ initialItems }: { initialItems: AdminExp
     setForm({
       company: item.company,
       period: item.period,
-      role: item.role,
+      role_id: item.role_id !== null ? String(item.role_id) : "",
+      contract_type: item.contract_type ?? "",
       description: item.description,
       hidden: item.hidden ?? false,
     })
     setModalOpen(true)
+  }
+
+  function buildPayload() {
+    return {
+      company: form.company,
+      period: form.period,
+      role_id: form.role_id ? Number(form.role_id) : null,
+      contract_type: form.contract_type ? (form.contract_type as ContractType) : null,
+      description: form.description,
+      hidden: form.hidden,
+    }
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -59,7 +87,11 @@ export function ExperiencesPageClient({ initialItems }: { initialItems: AdminExp
     if (!canMutate) return
 
     setSubmitting(true)
-    const response = editingId !== null ? await API.put(`/admin/experiences/${editingId}`, form) : await API.post("/admin/experiences", form)
+    const payload = buildPayload()
+    const response =
+      editingId !== null
+        ? await API.put(`/admin/experiences/${editingId}`, payload)
+        : await API.post("/admin/experiences", payload)
     const data = await response.json()
     setItems(data)
     await refreshAuth()
@@ -95,6 +127,13 @@ export function ExperiencesPageClient({ initialItems }: { initialItems: AdminExp
           />
         )}
 
+        {roles.length === 0 && (
+          <AlertBanner
+            variant="info"
+            message="Cadastre cargos em /admin/roles antes de vincular experiências."
+          />
+        )}
+
         {items.length === 0 ? (
           <p className="text-sm text-zinc-500">Nenhuma experiência cadastrada.</p>
         ) : (
@@ -122,11 +161,32 @@ export function ExperiencesPageClient({ initialItems }: { initialItems: AdminExp
           />
         </Field>
         <Field label="Cargo">
-          <TextInput
-            required
-            value={form.role}
-            onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-          />
+          <SelectInput
+            value={form.role_id}
+            onChange={(e) => setForm((f) => ({ ...f, role_id: e.target.value }))}
+          >
+            <option value="">—</option>
+            {roles
+              .filter((role) => role.active)
+              .map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.title} ({role.locale === "todos" ? "Todos" : role.locale.toUpperCase()})
+                </option>
+              ))}
+          </SelectInput>
+        </Field>
+        <Field label="Tipo de contrato">
+          <SelectInput
+            value={form.contract_type}
+            onChange={(e) => setForm((f) => ({ ...f, contract_type: e.target.value }))}
+          >
+            <option value="">—</option>
+            {CONTRACT_TYPES.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </SelectInput>
         </Field>
         <Field label="Período">
           <TextInput

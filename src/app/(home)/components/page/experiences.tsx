@@ -33,9 +33,16 @@ export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
                   <h3 className="text-lg font-semibold">{experience.role}</h3>
                   <p className="text-sm text-muted-foreground">{experience.company}</p>
                 </div>
-                <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
-                  {experience.period}
-                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {experience.contract_type && (
+                    <span className="rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
+                      {experience.contract_type}
+                    </span>
+                  )}
+                  <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
+                    {experience.period}
+                  </span>
+                </div>
               </div>
               <div
                 className="mt-4 space-y-2 text-sm leading-relaxed text-muted-foreground [&_a]:text-foreground [&_a]:underline [&_em]:italic [&_li]:ml-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p+p]:mt-2 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-5"

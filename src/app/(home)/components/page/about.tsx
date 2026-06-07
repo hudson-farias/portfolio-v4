@@ -4,12 +4,20 @@ import { AppIcon } from "@/components/icons/app-icon"
 import { Reveal } from "../reveal"
 import type { Profile, SocialNetwork, Stats } from "@/lib/types"
 
-export const About = ({ profile, stats, socialNetworks }: { profile: Profile; stats: Stats; socialNetworks: SocialNetwork[] }) => {
+export const About = ({
+  profile,
+  stats,
+  socialNetworks,
+}: {
+  profile: Pick<Profile, "aboutExtended">
+  stats: Stats
+  socialNetworks: SocialNetwork[]
+}) => {
   return (
     <section id="about" className="scroll-mt-28 space-y-12">
       <Reveal className="mx-auto max-w-3xl space-y-4 text-center">
         <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Sobre mim</h2>
-        <p className="text-lg leading-relaxed text-muted-foreground">{profile.aboutExtended}</p>
+        <p className="text-lg leading-relaxed text-muted-foreground">{profile.about_extended}</p>
       </Reveal>
 
       <div className="flex flex-wrap items-center justify-center gap-4 border-b pb-10">

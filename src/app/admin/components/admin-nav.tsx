@@ -3,12 +3,14 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import { Briefcase, FolderGit2, Layers, LayoutDashboard, Share2 } from "lucide-react"
+import { BadgeCheck, Briefcase, FolderGit2, Layers, LayoutDashboard, Share2, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/profile", label: "Perfil", icon: User },
+  { href: "/admin/roles", label: "Cargos", icon: BadgeCheck },
   { href: "/admin/experiences", label: "Experiências", icon: Briefcase },
   { href: "/admin/projects", label: "Projetos", icon: FolderGit2 },
   { href: "/admin/skills", label: "Skills", icon: Layers },
