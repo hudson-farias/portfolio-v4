@@ -23,13 +23,19 @@ import { IconSelect } from "../components/icon-select"
 import { FormModal } from "../components/form-modal"
 import { PageHeader } from "../components/page-header"
 import { RowActions } from "../components/row-actions"
+import { adminMutation } from "../lib/admin-toast"
 import { AppIcon } from "@/components/icons/app-icon"
 
 const LOCALES: LocaleOption[] = [
+  { value: "", label: "Todos" },
   { value: "pt", label: "PT" },
   { value: "en", label: "EN" },
-  { value: "todos", label: "Todos" },
 ]
+
+function localeLabel(locale: string | null) {
+  if (locale == null) return "Todos"
+  return locale.toUpperCase()
+}
 
 const SENIORITIES: SeniorityOption[] = [
   { value: "Junior", label: "Junior" },
@@ -72,7 +78,7 @@ function formToPayload(form: RoleForm) {
     seniority: form.seniority ? (form.seniority as RoleSeniority) : null,
     show: form.show,
     featured: form.featured,
-    locale: form.locale,
+    locale: form.locale || null,
     active: form.active,
     sort_order: form.sort_order,
     color: form.color || null,
@@ -108,7 +114,7 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
       seniority: item.seniority ?? "",
       show: item.show,
       featured: item.featured,
-      locale: item.locale,
+      locale: item.locale ?? "",
       active: item.active,
       sort_order: item.sort_order,
       color: item.color ?? "",
@@ -123,11 +129,17 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
 
     setSubmitting(true)
     const payload = formToPayload(form)
-    const response =
-      editingId !== null
-        ? await API.put(`/admin/roles/${editingId}`, payload)
-        : await API.post("/admin/roles", payload)
-    const data = await response.json()
+    const data = await adminMutation<AdminRole[]>(
+      () =>
+        editingId !== null
+          ? API.put(`/admin/roles/${editingId}`, payload)
+          : API.post("/admin/roles", payload),
+      editingId !== null ? "Cargo atualizado com sucesso." : "Cargo criado com sucesso.",
+    )
+    if (!data) {
+      setSubmitting(false)
+      return
+    }
     setItems(data)
     await refreshAuth()
     setModalOpen(false)
@@ -138,8 +150,11 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
     if (!canMutate) return
     if (!window.confirm("Excluir este cargo? Experiências vinculadas ficarão sem cargo.")) return
 
-    const response = await API.delete(`/admin/roles/${id}`)
-    const data = await response.json()
+    const data = await adminMutation<AdminRole[]>(
+      () => API.delete(`/admin/roles/${id}`),
+      "Cargo excluído com sucesso.",
+    )
+    if (!data) return
     setItems(data)
     await refreshAuth()
   }
@@ -198,7 +213,7 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
                       </div>
                     </td>
                     <td className="py-3 pr-4 text-zinc-500">
-                      {LOCALES.find((l) => l.value === item.locale)?.label ?? item.locale}
+                      {localeLabel(item.locale)}
                     </td>
                     <td className="py-3 pr-4 text-zinc-600 dark:text-zinc-400">
                       {item.category ?? "—"}
@@ -242,12 +257,11 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
         </Field>
         <Field label="Locale">
           <SelectInput
-            required
             value={form.locale}
             onChange={(e) => setForm((f) => ({ ...f, locale: e.target.value as RoleLocale }))}
           >
             {LOCALES.map(({ value, label }) => (
-              <option key={value} value={value}>
+              <option key={value || "all"} value={value}>
                 {label}
               </option>
             ))}

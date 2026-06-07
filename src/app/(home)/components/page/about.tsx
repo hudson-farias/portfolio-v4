@@ -2,10 +2,9 @@
 
 import { AppIcon } from "@/components/icons/app-icon"
 import { Reveal } from "../reveal"
-import type { AboutProps } from "../../interfaces"
-import type { SocialNetwork } from "@/types"
+import type { Stats, SocialNetwork } from "../../interfaces"
 
-export const About = ({ aboutExtended, stats, socialNetworks }: AboutProps) => {
+export const About = ({ aboutExtended, stats, socialNetworks }: { aboutExtended: string; stats: Stats; socialNetworks: SocialNetwork[] }) => {
   return (
     <section id="about" className="scroll-mt-28 space-y-12">
       <Reveal className="mx-auto max-w-3xl space-y-4 text-center">

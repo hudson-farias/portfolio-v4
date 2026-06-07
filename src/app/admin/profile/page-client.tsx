@@ -12,6 +12,7 @@ import { useAdminAuth } from "@/contexts/admin-auth"
 import { AlertBanner } from "../components/alert-banner"
 import { CheckboxField, Field, TextArea, TextInput } from "../components/form-fields"
 import { PageHeader } from "../components/page-header"
+import { adminMutation } from "../lib/admin-toast"
 import { Button } from "@/components/ui/button"
 
 function profileToForm(profile: AdminProfile): ProfileForm {
@@ -30,7 +31,6 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
 
   const [profile, setProfile] = useState(initialProfile)
   const [submitting, setSubmitting] = useState(false)
-  const [saved, setSaved] = useState(false)
   const [form, setForm] = useState<ProfileForm | null>(() =>
     initialProfile ? profileToForm(initialProfile) : null,
   )
@@ -40,24 +40,24 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
     setForm(initialProfile ? profileToForm(initialProfile) : null)
   }, [initialProfile])
 
-  function markDirty() {
-    setSaved(false)
-  }
-
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (!canMutate || !form) return
 
     setSubmitting(true)
-    setSaved(false)
 
-    const response = await API.put("/admin/profile", form)
-    const data: AdminProfile = await response.json()
+    const data = await adminMutation<AdminProfile>(
+      () => API.put("/admin/profile", form),
+      "Perfil salvo com sucesso.",
+    )
+    if (!data) {
+      setSubmitting(false)
+      return
+    }
     setProfile(data)
     setForm(profileToForm(data))
     await refreshAuth()
     setSubmitting(false)
-    setSaved(true)
   }
 
   return (
@@ -93,10 +93,7 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
                   disabled={!canMutate}
                   placeholder="Ex: Hudson"
                   value={form.name}
-                  onChange={(e) => {
-                    markDirty()
-                    setForm({ ...form, name: e.target.value })
-                  }}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
               </Field>
 
@@ -105,10 +102,7 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
                   disabled={!canMutate}
                   placeholder="Ex: Farias"
                   value={form.last_name}
-                  onChange={(e) => {
-                    markDirty()
-                    setForm({ ...form, last_name: e.target.value })
-                  }}
+                  onChange={(e) => setForm({ ...form, last_name: e.target.value })}
                 />
               </Field>
 
@@ -117,20 +111,14 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
                   disabled={!canMutate}
                   placeholder="Ex: Rio de Janeiro, Brasil"
                   value={form.location}
-                  onChange={(e) => {
-                    markDirty()
-                    setForm({ ...form, location: e.target.value })
-                  }}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
                 />
               </Field>
 
               <CheckboxField
                 label="Disponível"
                 checked={form.available}
-                onChange={(checked) => {
-                  markDirty()
-                  setForm({ ...form, available: checked })
-                }}
+                onChange={(checked) => setForm({ ...form, available: checked })}
               />
 
               <Field label="Resumo">
@@ -139,10 +127,7 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
                   disabled={!canMutate}
                   placeholder="Breve apresentação profissional..."
                   value={form.summary}
-                  onChange={(e) => {
-                    markDirty()
-                    setForm({ ...form, summary: e.target.value })
-                  }}
+                  onChange={(e) => setForm({ ...form, summary: e.target.value })}
                 />
               </Field>
 
@@ -152,19 +137,14 @@ export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
                   disabled={!canMutate}
                   placeholder="Conte sua trajetória, stack e experiências..."
                   value={form.about_me}
-                  onChange={(e) => {
-                    markDirty()
-                    setForm({ ...form, about_me: e.target.value })
-                  }}
+                  onChange={(e) => setForm({ ...form, about_me: e.target.value })}
                 />
               </Field>
             </div>
 
             {canMutate && (
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 bg-zinc-50 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900/50 md:px-8">
-                <p className="text-sm text-zinc-500">
-                  {saved ? "Alterações salvas com sucesso." : "Salve para aplicar as mudanças."}
-                </p>
+                <p className="text-sm text-zinc-500">Salve para aplicar as mudanças.</p>
                 <Button type="submit" className="gap-1.5" disabled={submitting}>
                   <Save className="size-4" />
                   {submitting ? "Salvando..." : "Salvar alterações"}

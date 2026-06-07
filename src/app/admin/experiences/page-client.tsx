@@ -5,13 +5,7 @@ import { useEffect, useState } from "react"
 import { Briefcase } from "lucide-react"
 
 import { API } from "@/api/client"
-import type {
-  AdminExperience,
-  ContractType,
-  ContractTypeOption,
-  ExperienceForm,
-  ExperiencesPageClientProps,
-} from "./interfaces"
+import type { AdminExperience, ContractType, ContractTypeOption, ExperienceForm, ExperiencesPageClientProps, } from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 
@@ -20,6 +14,7 @@ import { CheckboxField, Field, SelectInput, TextArea, TextInput } from "../compo
 import { FormModal } from "../components/form-modal"
 import { PageHeader } from "../components/page-header"
 import { ExperiencesTable } from "../components/experiences-table"
+import { adminMutation } from "../lib/admin-toast"
 
 const CONTRACT_TYPES: ContractTypeOption[] = [
   { value: "CLT", label: "CLT" },
@@ -88,11 +83,17 @@ export function ExperiencesPageClient({ initialItems, roles }: ExperiencesPageCl
 
     setSubmitting(true)
     const payload = buildPayload()
-    const response =
-      editingId !== null
-        ? await API.put(`/admin/experiences/${editingId}`, payload)
-        : await API.post("/admin/experiences", payload)
-    const data = await response.json()
+    const data = await adminMutation<AdminExperience[]>(
+      () =>
+        editingId !== null
+          ? API.put(`/admin/experiences/${editingId}`, payload)
+          : API.post("/admin/experiences", payload),
+      editingId !== null ? "Experiência atualizada com sucesso." : "Experiência criada com sucesso.",
+    )
+    if (!data) {
+      setSubmitting(false)
+      return
+    }
     setItems(data)
     await refreshAuth()
     setModalOpen(false)
@@ -103,8 +104,11 @@ export function ExperiencesPageClient({ initialItems, roles }: ExperiencesPageCl
     if (!canMutate) return
     if (!window.confirm("Excluir esta experiência?")) return
 
-    const response = await API.delete(`/admin/experiences/${id}`)
-    const data = await response.json()
+    const data = await adminMutation<AdminExperience[]>(
+      () => API.delete(`/admin/experiences/${id}`),
+      "Experiência excluída com sucesso.",
+    )
+    if (!data) return
     setItems(data)
     await refreshAuth()
   }
@@ -170,7 +174,7 @@ export function ExperiencesPageClient({ initialItems, roles }: ExperiencesPageCl
               .filter((role) => role.active)
               .map((role) => (
                 <option key={role.id} value={role.id}>
-                  {role.title} ({role.locale === "todos" ? "Todos" : role.locale.toUpperCase()})
+                  {role.title} ({role.locale == null ? "Todos" : role.locale.toUpperCase()})
                 </option>
               ))}
           </SelectInput>

@@ -1,10 +1,6 @@
 import type { Experience, Project, SkillCategory, SocialNetwork } from "@/types"
+export type { SocialNetwork } from "@/types"
 
-export interface AboutProps {
-  aboutExtended: string
-  stats: Stats
-  socialNetworks: SocialNetwork[]
-}
 
 export interface Profile {
   name: string

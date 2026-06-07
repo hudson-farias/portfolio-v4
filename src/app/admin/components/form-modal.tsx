@@ -4,33 +4,12 @@ import { X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
-export function FormModal({
-  open,
-  title,
-  children,
-  submitting,
-  submitLabel = "Salvar",
-  onClose,
-  onSubmit,
-}: {
-  open: boolean
-  title: string
-  children: React.ReactNode
-  submitting?: boolean
-  submitLabel?: string
-  onClose: () => void
-  onSubmit: (event: React.FormEvent) => void
-}) {
+export function FormModal({ open, title, children, submitting, submitLabel = "Salvar", onClose, onSubmit, }: { open: boolean; title: string; children: React.ReactNode; submitting?: boolean; submitLabel?: string; onClose: () => void; onSubmit: (event: React.FormEvent) => void }) {
   if (!open) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="form-modal-title"
-        className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
-      >
+      <div role="dialog" aria-modal="true" aria-labelledby="form-modal-title" className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
         <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
           <h2 id="form-modal-title" className="font-semibold">
             {title}

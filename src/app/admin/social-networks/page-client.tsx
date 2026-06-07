@@ -20,6 +20,7 @@ import { PageHeader } from "../components/page-header"
 import { AppIcon } from "@/components/icons/app-icon"
 import { socialIconNames } from "@/components/icons/map"
 import { RowActions } from "../components/row-actions"
+import { adminMutation, adminToast } from "../lib/admin-toast"
 
 const emptyForm: SocialNetworkForm = {
   url: "",
@@ -43,7 +44,6 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
   const [submitting, setSubmitting] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
-  const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
     setItems(initialItems)
@@ -52,7 +52,6 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
   function openCreate() {
     setEditingId(null)
     setForm(emptyForm)
-    setFormError(null)
     setModalOpen(true)
   }
 
@@ -64,7 +63,6 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
       show_header: item.show_header,
       show_footer: item.show_footer,
     })
-    setFormError(null)
     setModalOpen(true)
   }
 
@@ -72,17 +70,22 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
     event.preventDefault()
     if (!canMutate) return
     if (!form.show_header && !form.show_footer) {
-      setFormError("Selecione pelo menos Header ou Footer.")
+      adminToast.error("Selecione pelo menos Header ou Footer.")
       return
     }
 
     setSubmitting(true)
-    setFormError(null)
-    const response =
-      editingId !== null
-        ? await API.put(`/admin/social_networks/${editingId}`, form)
-        : await API.post("/admin/social_networks", form)
-    const data = await response.json()
+    const data = await adminMutation<AdminSocialNetwork[]>(
+      () =>
+        editingId !== null
+          ? API.put(`/admin/social_networks/${editingId}`, form)
+          : API.post("/admin/social_networks", form),
+      editingId !== null ? "Rede social atualizada com sucesso." : "Rede social criada com sucesso.",
+    )
+    if (!data) {
+      setSubmitting(false)
+      return
+    }
     setItems(data)
     await refreshAuth()
     setModalOpen(false)
@@ -93,8 +96,11 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
     if (!canMutate) return
     if (!window.confirm("Excluir esta rede social?")) return
 
-    const response = await API.delete(`/admin/social_networks/${id}`)
-    const data = await response.json()
+    const data = await adminMutation<AdminSocialNetwork[]>(
+      () => API.delete(`/admin/social_networks/${id}`),
+      "Rede social excluída com sucesso.",
+    )
+    if (!data) return
     setItems(data)
     await refreshAuth()
   }
@@ -178,7 +184,6 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
         onClose={() => setModalOpen(false)}
         onSubmit={handleSubmit}
       >
-        {formError && <AlertBanner message={formError} />}
         <Field label="URL">
           <TextInput
             required

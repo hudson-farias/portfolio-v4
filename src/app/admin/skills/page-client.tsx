@@ -16,6 +16,7 @@ import { AppIcon } from "@/components/icons/app-icon"
 import { skillIconNames } from "@/components/icons/map"
 import { IconSelect } from "../components/icon-select"
 import { RowActions } from "../components/row-actions"
+import { adminMutation } from "../lib/admin-toast"
 
 const emptyForm: SkillForm = {
   name: "",
@@ -60,11 +61,17 @@ export function SkillsPageClient({ initialData }: SkillsPageClientProps) {
     if (!canMutate) return
 
     setSubmitting(true)
-    const response =
-      editingId !== null
-        ? await API.put(`/admin/skills/${editingId}`, form)
-        : await API.post("/admin/skills", form)
-    const next = await response.json()
+    const next = await adminMutation<SkillsPageClientProps["initialData"]>(
+      () =>
+        editingId !== null
+          ? API.put(`/admin/skills/${editingId}`, form)
+          : API.post("/admin/skills", form),
+      editingId !== null ? "Skill atualizada com sucesso." : "Skill criada com sucesso.",
+    )
+    if (!next) {
+      setSubmitting(false)
+      return
+    }
     setData(next)
     await refreshAuth()
     setModalOpen(false)
@@ -75,8 +82,11 @@ export function SkillsPageClient({ initialData }: SkillsPageClientProps) {
     if (!canMutate) return
     if (!window.confirm("Excluir esta skill?")) return
 
-    const response = await API.delete(`/admin/skills/${id}`)
-    const next = await response.json()
+    const next = await adminMutation<SkillsPageClientProps["initialData"]>(
+      () => API.delete(`/admin/skills/${id}`),
+      "Skill excluída com sucesso.",
+    )
+    if (!next) return
     setData(next)
     await refreshAuth()
   }

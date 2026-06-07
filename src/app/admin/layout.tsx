@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react"
 import { AdminAuthProvider } from "@/contexts/admin-auth"
 
 import { AdminNav } from "./components/admin-nav"
+import { AdminToaster } from "./components/admin-toaster"
 import { AdminLayoutClient } from "./layout-client"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -35,6 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </aside>
 
           <main className="min-w-0 flex-1 overflow-auto">{children}</main>
+          <AdminToaster />
         </div>
       </AdminAuthProvider>
     </Suspense>

@@ -11,6 +11,7 @@ import { useAdminAuth } from "@/contexts/admin-auth"
 import { AlertBanner } from "../components/alert-banner"
 import { PageHeader } from "../components/page-header"
 import { RowActions } from "../components/row-actions"
+import { adminMutation } from "../lib/admin-toast"
 import { Button } from "@/components/ui/button"
 
 export function ProjectsPageClient({ initialData }: ProjectsPageClientProps) {
@@ -27,19 +28,25 @@ export function ProjectsPageClient({ initialData }: ProjectsPageClientProps) {
     if (!canMutate) return
 
     setAddingId(project.git_id)
-    const response = await API.post(`/admin/projects/${project.git_id}`, {})
-    const next = await response.json()
+    const next = await adminMutation<ProjectsPageClientProps["initialData"]>(
+      () => API.post(`/admin/projects/${project.git_id}`, {}),
+      `"${project.name}" adicionado ao portfólio.`,
+    )
+    setAddingId(null)
+    if (!next) return
     setData(next)
     await refreshAuth()
-    setAddingId(null)
   }
 
   async function handleRemove(gitId: number) {
     if (!canMutate) return
     if (!window.confirm("Remover este projeto do portfólio?")) return
 
-    const response = await API.delete(`/admin/projects/${gitId}`)
-    const next = await response.json()
+    const next = await adminMutation<ProjectsPageClientProps["initialData"]>(
+      () => API.delete(`/admin/projects/${gitId}`),
+      "Projeto removido do portfólio.",
+    )
+    if (!next) return
     setData(next)
     await refreshAuth()
   }
