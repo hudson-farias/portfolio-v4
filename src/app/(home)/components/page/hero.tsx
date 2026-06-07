@@ -68,7 +68,7 @@ export const Hero = ({ profile }: { profile: HeroProfile }) => {
         {profile.available && (
           <p className="surface land-fade-up inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-muted-foreground">
             <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
-            Disponível para freelas e oportunidades
+            Disponível para freelancers e oportunidades
           </p>
         )}
 

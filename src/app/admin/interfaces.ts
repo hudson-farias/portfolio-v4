@@ -1,4 +1,5 @@
-import type { Experience, Project, SkillCategory, SocialNetwork } from "@/types"
+import type { Experience, Project, SkillCategory } from "@/types"
+import type { AdminSocialNetwork } from "./social-networks/interfaces"
 
 export interface AdminDashboard {
   counts: {
@@ -10,8 +11,7 @@ export interface AdminDashboard {
   experiences: Experience[]
   projects: Project[]
   skills: SkillCategory[]
-  social_networks_header: SocialNetwork[]
-  social_networks_footer: SocialNetwork[]
+  social_networks: AdminSocialNetwork[]
 }
 
 export interface AdminPageClientProps {

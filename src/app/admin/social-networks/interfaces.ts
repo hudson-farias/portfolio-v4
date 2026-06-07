@@ -2,15 +2,13 @@ export interface AdminSocialNetwork {
   id: number
   url: string
   icon: string
-  show_header: boolean
-  show_footer: boolean
+  positions: string[]
 }
 
 export interface SocialNetworkForm {
   url: string
   icon: string
-  show_header: boolean
-  show_footer: boolean
+  positions: string[]
 }
 
 export interface SocialNetworksPageClientProps {

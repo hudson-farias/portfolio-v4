@@ -1,21 +1,9 @@
 import { AppIcon } from "@/components/icons/app-icon"
+import { formatLandpageSections } from "@/app/admin/lib/landpage-sections"
 import { RowActions } from "./row-actions"
-import type { SocialNetwork } from "@/types"
+import type { AdminSocialNetwork } from "../social-networks/interfaces"
 
-export const SocialNetworksTable = ({
-  header,
-  footer,
-  canMutate,
-}: {
-  header: SocialNetwork[]
-  footer: SocialNetwork[]
-  canMutate: boolean
-}) => {
-  const rows = [
-    ...header.map((item) => ({ ...item, placement: "Header" as const })),
-    ...footer.map((item) => ({ ...item, placement: "Footer" as const })),
-  ]
-
+export const SocialNetworksTable = ({ items, canMutate, }: { items: AdminSocialNetwork[]; canMutate: boolean }) => {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[560px] text-left text-sm">
@@ -23,14 +11,14 @@ export const SocialNetworksTable = ({
           <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
             <th className="pb-3 pr-4 font-medium">Ícone</th>
             <th className="pb-3 pr-4 font-medium">URL</th>
-            <th className="pb-3 pr-4 font-medium">Exibição</th>
+            <th className="pb-3 pr-4 font-medium">Seções</th>
             {canMutate && <th className="pb-3 font-medium">Ações</th>}
           </tr>
         </thead>
         <tbody>
-          {rows.map((item) => (
+          {items.map((item) => (
             <tr
-              key={`${item.placement}-${item.id}`}
+              key={item.id}
               className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/80"
             >
               <td className="py-3 pr-4">
@@ -51,7 +39,7 @@ export const SocialNetworksTable = ({
               </td>
               <td className="py-3 pr-4">
                 <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium dark:bg-zinc-800">
-                  {item.placement}
+                  {formatLandpageSections(item.positions)}
                 </span>
               </td>
               {canMutate && (

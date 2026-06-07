@@ -83,14 +83,13 @@ export function AdminPageClient({ data }: AdminPageClientProps) {
 
             <Section
                 title="Redes sociais"
-                description="Links exibidos no header e footer"
+                description="Links exibidos nas seções da landpage"
                 icon={Share2}
                 canMutate={canMutate}
                 href="/admin/social-networks"
             >
                 <SocialNetworksTable
-                    header={data.social_networks_header}
-                    footer={data.social_networks_footer}
+                    items={data.social_networks}
                     canMutate={false}
                 />
             </Section>

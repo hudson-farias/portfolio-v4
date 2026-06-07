@@ -22,7 +22,7 @@ export default async function Home() {
   return (
     <>
       <Hero profile={hero.profile} />
-      <About aboutExtended={about.profile.about_extended} stats={aboutStats} socialNetworks={hero.social_networks} />
+      <About aboutExtended={about.profile.about_extended} stats={aboutStats} socialNetworks={about.social_networks} />
       <Skills categories={skills.skills} />
       <Experiences experiences={experiences.experiences} />
       <Projects projects={projects.projects} />

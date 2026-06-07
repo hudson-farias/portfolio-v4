@@ -1,10 +1,12 @@
 import { Footer } from "./components/layout/footer"
 import { Header } from "./components/layout/header"
 
-import { getPortfolioData } from "@/lib/data"
+import { API } from "@/api/server"
+import type { LandpageResponse } from "./interfaces"
 
 export default async function HomeLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const data = await getPortfolioData()
+  const response = await API.get("/landpage")
+  const { footer }: LandpageResponse = await response.json()
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -14,7 +16,7 @@ export default async function HomeLayout({ children }: Readonly<{ children: Reac
         {children}
       </main>
 
-      <Footer socialNetworks={data.socialNetworksFooter} />
+      <Footer socialNetworks={footer.social_networks} />
     </div>
   )
 }

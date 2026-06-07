@@ -21,19 +21,12 @@ import { AppIcon } from "@/components/icons/app-icon"
 import { socialIconNames } from "@/components/icons/map"
 import { RowActions } from "../components/row-actions"
 import { adminMutation, adminToast } from "../lib/admin-toast"
+import { formatLandpageSections, LANDPAGE_SECTIONS } from "../lib/landpage-sections"
 
 const emptyForm: SocialNetworkForm = {
   url: "",
   icon: "",
-  show_header: false,
-  show_footer: false,
-}
-
-function placementLabel(item: Pick<SocialNetworkForm, "show_header" | "show_footer">) {
-  const parts: string[] = []
-  if (item.show_header) parts.push("Header")
-  if (item.show_footer) parts.push("Footer")
-  return parts.length > 0 ? parts.join(" · ") : "—"
+  positions: [],
 }
 
 export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageClientProps) {
@@ -60,17 +53,25 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
     setForm({
       url: item.url,
       icon: item.icon,
-      show_header: item.show_header,
-      show_footer: item.show_footer,
+      positions: item.positions,
     })
     setModalOpen(true)
+  }
+
+  function togglePosition(position: string, checked: boolean) {
+    setForm((current) => ({
+      ...current,
+      positions: checked
+        ? [...current.positions, position]
+        : current.positions.filter((item) => item !== position),
+    }))
   }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (!canMutate) return
-    if (!form.show_header && !form.show_footer) {
-      adminToast.error("Selecione pelo menos Header ou Footer.")
+    if (form.positions.length === 0) {
+      adminToast.error("Selecione pelo menos uma seção da landpage.")
       return
     }
 
@@ -109,7 +110,7 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
     <div>
       <PageHeader
         title="Redes sociais"
-        description="Links exibidos no header e footer do site"
+        description="Defina em quais seções da landpage cada link será exibido"
         icon={Share2}
         canMutate={canMutate}
         onAdd={openCreate}
@@ -132,7 +133,7 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
                 <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
                   <th className="pb-3 pr-4 font-medium">Ícone</th>
                   <th className="pb-3 pr-4 font-medium">URL</th>
-                  <th className="pb-3 pr-4 font-medium">Exibição</th>
+                  <th className="pb-3 pr-4 font-medium">Seções</th>
                   {canMutate && <th className="pb-3 font-medium">Ações</th>}
                 </tr>
               </thead>
@@ -157,7 +158,7 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
                     </td>
                     <td className="py-3 pr-4">
                       <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium dark:bg-zinc-800">
-                        {placementLabel(item)}
+                        {formatLandpageSections(item.positions)}
                       </span>
                     </td>
                     {canMutate && (
@@ -201,18 +202,18 @@ export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageCli
             onChange={(icon) => setForm((f) => ({ ...f, icon }))}
           />
         </Field>
-        <div className="flex flex-wrap gap-4">
-          <CheckboxField
-            label="Exibir no header"
-            checked={form.show_header}
-            onChange={(checked) => setForm((f) => ({ ...f, show_header: checked }))}
-          />
-          <CheckboxField
-            label="Exibir no footer"
-            checked={form.show_footer}
-            onChange={(checked) => setForm((f) => ({ ...f, show_footer: checked }))}
-          />
-        </div>
+        <Field label="Seções da landpage">
+          <div className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+            {LANDPAGE_SECTIONS.map(({ id, label }) => (
+              <CheckboxField
+                key={id}
+                label={label}
+                checked={form.positions.includes(id)}
+                onChange={(checked) => togglePosition(id, checked)}
+              />
+            ))}
+          </div>
+        </Field>
       </FormModal>
     </div>
   )

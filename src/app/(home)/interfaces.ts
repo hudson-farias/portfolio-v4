@@ -31,14 +31,9 @@ export interface PortfolioData {
   socialNetworksFooter: SocialNetwork[]
 }
 
-export interface ContactMethod {
-  type: string
-  value: string
-}
-
 export interface ContactResponse {
   email: string
-  others: ContactMethod[]
+  others: SocialNetwork[]
 }
 
 export interface HeroProfile {
@@ -50,21 +45,19 @@ export interface HeroProfile {
   available: boolean
 }
 
-export interface HeroResponse {
-  profile: HeroProfile
-  social_networks: SocialNetwork[]
-}
-
 export interface ExperiencesResponse {
   experiences: Experience[]
+  social_networks: SocialNetwork[]
 }
 
 export interface SkillsResponse {
   skills: SkillCategory[]
+  social_networks: SocialNetwork[]
 }
 
 export interface ProjectsResponse {
   projects: Project[]
+  social_networks: SocialNetwork[]
 }
 
 export interface AboutResponse {
@@ -76,6 +69,16 @@ export interface AboutResponse {
     projects_count: number
     clients_count: number
   }
+  social_networks: SocialNetwork[]
+}
+
+export interface HeroResponse {
+  profile: HeroProfile
+  social_networks: SocialNetwork[]
+}
+
+export interface FooterResponse {
+  social_networks: SocialNetwork[]
 }
 
 export interface LandpageResponse {
@@ -85,6 +88,7 @@ export interface LandpageResponse {
   hero: HeroResponse
   projects: ProjectsResponse
   skills: SkillsResponse
+  footer: FooterResponse
 }
 
 export interface ApiResponse {

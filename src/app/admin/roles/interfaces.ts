@@ -1,5 +1,4 @@
 export type RoleSeniority = "Junior" | "Pleno" | "Senior" | "Lead"
-export type RoleLocale = "" | "pt" | "en"
 
 export interface AdminRole {
   id: number
@@ -24,7 +23,7 @@ export interface RoleForm {
   seniority: string
   show: boolean
   featured: boolean
-  locale: RoleLocale
+  locale: string | null
   active: boolean
   sort_order: number
   color: string
@@ -36,7 +35,7 @@ export interface RolesPageClientProps {
 }
 
 export interface LocaleOption {
-  value: RoleLocale
+  value: string | null
   label: string
 }
 

@@ -5,15 +5,7 @@ import { useEffect, useState } from "react"
 import { BadgeCheck } from "lucide-react"
 
 import { API } from "@/api/client"
-import type {
-  AdminRole,
-  LocaleOption,
-  RoleForm,
-  RoleLocale,
-  RoleSeniority,
-  RolesPageClientProps,
-  SeniorityOption,
-} from "./interfaces"
+import type { AdminRole, LocaleOption, RoleForm, RoleSeniority, RolesPageClientProps, SeniorityOption } from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 
@@ -114,7 +106,7 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
       seniority: item.seniority ?? "",
       show: item.show,
       featured: item.featured,
-      locale: item.locale ?? "",
+      locale: item.locale ?? null,
       active: item.active,
       sort_order: item.sort_order,
       color: item.color ?? "",
@@ -257,11 +249,11 @@ export function RolesPageClient({ initialItems }: RolesPageClientProps) {
         </Field>
         <Field label="Locale">
           <SelectInput
-            value={form.locale}
-            onChange={(e) => setForm((f) => ({ ...f, locale: e.target.value as RoleLocale }))}
+            value={form.locale || ''}
+            onChange={(e) => setForm((f) => ({ ...f, locale: e.target.value }))}
           >
             {LOCALES.map(({ value, label }) => (
-              <option key={value || "all"} value={value}>
+              <option key={value || "all"} value={value || ''}>
                 {label}
               </option>
             ))}

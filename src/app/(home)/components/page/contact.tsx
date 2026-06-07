@@ -3,9 +3,16 @@
 import { ArrowRight } from "lucide-react"
 import { Reveal } from "../reveal"
 import { Button } from "@/components/ui/button"
-import type { ContactMethod } from "../../interfaces"
+import { AppIcon } from "@/components/icons/app-icon"
+import type { SocialNetwork } from "../../interfaces"
 
-export const Contact = ({ email, others }: { email: string; others: ContactMethod[] }) => {
+export const Contact = ({
+  email,
+  others,
+}: {
+  email: string
+  others: SocialNetwork[]
+}) => {
   return (
     <section id="contact" className="scroll-mt-28">
       <Reveal variant="scale" duration={700}>
@@ -27,20 +34,23 @@ export const Contact = ({ email, others }: { email: string; others: ContactMetho
             </Button>
           </Reveal>
           {others.length > 0 && (
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              {others.map((method, i) => (
-                <Reveal key={`${method.type}-${method.value}`} variant="fade-up" delay={280 + i * 80} as="span">
-                  <a
-                    href={method.value}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline"
-                  >
-                    {method.type}
-                  </a>
-                </Reveal>
-              ))}
-            </div>
+            <Reveal variant="fade-up" delay={260}>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                {others.map((network, i) => (
+                  <Reveal key={network.id} as="span" variant="scale" delay={280 + i * 80}>
+                    <a
+                      href={network.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="surface inline-flex size-10 items-center justify-center rounded-full text-muted-foreground transition-[transform,colors] hover:-translate-y-0.5 hover:border-foreground/20 hover:text-foreground"
+                      aria-label={network.icon}
+                    >
+                      <AppIcon name={network.icon} className="size-4" />
+                    </a>
+                  </Reveal>
+                ))}
+              </div>
+            </Reveal>
           )}
         </div>
       </Reveal>
