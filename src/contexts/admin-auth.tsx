@@ -1,7 +1,6 @@
 "use client"
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
 
 import { API } from "@/api/client"
 
@@ -14,9 +13,6 @@ type AdminAuthContextValue = {
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null)
 
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
-  const searchParams = useSearchParams()
-  const queryToken = searchParams.get("token")
-
   const [canMutate, setCanMutate] = useState(false)
 
   const refreshAuth = useCallback(async () => {
@@ -25,14 +21,10 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (queryToken) {
-      API.setToken(queryToken)
-      return
-    }
     refreshAuth()
-  }, [queryToken, refreshAuth])
+  }, [refreshAuth])
 
-  const logout = () => API.deleteToken()
+  const logout = () => API.logout()
 
   return (
     <AdminAuthContext.Provider value={{ canMutate, refreshAuth, logout }}>

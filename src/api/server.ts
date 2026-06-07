@@ -1,6 +1,6 @@
-import { cookies } from "next/headers"
+import { cookies } from 'next/headers'
 
-const AUTH_COOKIE = 'ACCESS_TOKEN_ADMIN'
+import { AUTH_COOKIE } from './client'
 
 class ApiServer {
   private baseURL: string
@@ -12,9 +12,10 @@ class ApiServer {
   private async authHeaders(): Promise<Record<string, string>> {
     const cookieStore = await cookies()
     const token = cookieStore.get(AUTH_COOKIE)?.value
+
     return {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      'Content-Type': 'application/json',
+      ...(token ? { Cookie: `${AUTH_COOKIE}=${token}` } : {}),
     }
   }
 
@@ -25,31 +26,27 @@ class ApiServer {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
-      cache: "no-store",
+      cache: 'no-store',
+      credentials: 'include',
     })
-
-    if (response.status === 498) {
-      const cookieStore = await cookies()
-      cookieStore.delete(AUTH_COOKIE)
-    }
 
     return response
   }
 
   get(endpoint: string): Promise<Response> {
-    return this.request("GET", endpoint)
+    return this.request('GET', endpoint)
   }
 
   post(endpoint: string, body: unknown): Promise<Response> {
-    return this.request("POST", endpoint, body)
+    return this.request('POST', endpoint, body)
   }
 
   put(endpoint: string, body: unknown): Promise<Response> {
-    return this.request("PUT", endpoint, body)
+    return this.request('PUT', endpoint, body)
   }
 
   delete(endpoint: string): Promise<Response> {
-    return this.request("DELETE", endpoint)
+    return this.request('DELETE', endpoint)
   }
 }
 
