@@ -1,7 +1,8 @@
 import { API } from "@/api/server"
 
 import { ExperiencesPageClient } from "./page-client"
-import type { AdminExperience, AdminRole } from "@/lib/admin-types"
+import type { AdminExperience } from "./interfaces"
+import type { AdminRole } from "../roles/interfaces"
 
 export default async function ExperiencesPage() {
   const [experiencesRes, rolesRes] = await Promise.all([

@@ -1,7 +1,7 @@
 import { Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AppIcon } from "@/components/icons/app-icon"
-import type { SkillCategory } from "@/lib/types"
+import type { SkillCategory } from "@/types"
 
 export const SkillsGrid = ({ categories, canMutate }: { categories: SkillCategory[]; canMutate: boolean }) => {
   return (

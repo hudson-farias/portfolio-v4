@@ -4,7 +4,7 @@ import Link from "next/link"
 
 import { Briefcase, FolderGit2, Layers, Share2 } from "lucide-react"
 
-import type { AdminDashboard } from "@/lib/admin-dashboard"
+import type { AdminPageClientProps } from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 import { StatCard } from "./components/stat-card"
@@ -14,7 +14,7 @@ import { SkillsGrid } from "./components/skills-grid"
 import { ProjectsList } from "./components/projects-list"
 import { SocialNetworksTable } from "./components/social-networks-table"
 
-export function AdminPageClient({ data }: { data: AdminDashboard }) {
+export function AdminPageClient({ data }: AdminPageClientProps) {
     const { canMutate } = useAdminAuth()
 
     return (

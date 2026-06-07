@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Reveal } from "../reveal"
 import { Button } from "@/components/ui/button"
-import type { SkillCategory } from "@/lib/types"
+import type { SkillCategory } from "@/types"
 
 const GAP_PX = 16
 const TRAILING_PX = 32

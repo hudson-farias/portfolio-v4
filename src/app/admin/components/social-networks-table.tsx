@@ -1,6 +1,6 @@
 import { AppIcon } from "@/components/icons/app-icon"
 import { RowActions } from "./row-actions"
-import type { SocialNetwork } from "@/lib/types"
+import type { SocialNetwork } from "@/types"
 
 export const SocialNetworksTable = ({
   header,

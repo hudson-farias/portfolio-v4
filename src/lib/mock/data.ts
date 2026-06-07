@@ -1,4 +1,4 @@
-import type { PortfolioData } from "@/lib/types"
+import type { PortfolioData } from "@/app/(home)/interfaces"
 
 export const mockPortfolioData: PortfolioData = {
   profile: {
@@ -9,7 +9,7 @@ export const mockPortfolioData: PortfolioData = {
     phone: "21 99688-9408",
     about:
       "Desenvolvedor de software com experiência desde janeiro de 2021. Construo aplicações web focadas em performance, qualidade e manutenção.",
-    aboutExtended:
+    about_extended:
       "Atuo com desenvolvimento de software e tenho como base linguagens como Python, C#, TypeScript e PHP. Trabalho principalmente com FastAPI, Playwright, Next.js e Tailwind, unindo backend, frontend e automação para entregar produtos confiáveis. Experiência como Tech Leader em startup, liderando decisões técnicas, evolução arquitetural e otimizações de performance.",
     available: true,
   },

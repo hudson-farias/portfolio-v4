@@ -1,5 +1,5 @@
-import type { AdminExperience } from "@/lib/admin-types"
-import type { Experience } from "@/lib/types"
+import type { AdminExperience } from "@/app/admin/experiences/interfaces"
+import type { Experience } from "@/types"
 
 import { RowActions } from "./row-actions"
 

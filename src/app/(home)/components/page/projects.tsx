@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
 import { Reveal } from "../reveal"
 import { AppIcon } from "@/components/icons/app-icon"
 import { Button } from "@/components/ui/button"
-import type { Project } from "@/lib/types"
+import type { Project } from "@/types"
 
 const GAP_PX = 16
 const TRAILING_PX = 32

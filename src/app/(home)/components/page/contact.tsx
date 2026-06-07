@@ -3,7 +3,7 @@
 import { ArrowRight } from "lucide-react"
 import { Reveal } from "../reveal"
 import { Button } from "@/components/ui/button"
-import type { ContactMethod } from "@/lib/types"
+import type { ContactMethod } from "../../interfaces"
 
 export const Contact = ({ email, others }: { email: string; others: ContactMethod[] }) => {
   return (

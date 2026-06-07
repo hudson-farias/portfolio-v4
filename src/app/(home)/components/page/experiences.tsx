@@ -1,7 +1,7 @@
 "use client"
 
 import { Reveal } from "../reveal"
-import type { Experience } from "@/lib/types"
+import type { Experience } from "@/types"
 
 export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
   return (

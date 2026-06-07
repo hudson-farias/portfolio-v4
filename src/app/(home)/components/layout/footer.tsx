@@ -2,7 +2,7 @@
 
 import { AppIcon } from "@/components/icons/app-icon"
 import { Reveal } from "../reveal"
-import type { SocialNetwork } from "@/lib/types"
+import type { SocialNetwork } from "@/types"
 
 const footerLinks = [
   { label: "Sobre", href: "#about" },

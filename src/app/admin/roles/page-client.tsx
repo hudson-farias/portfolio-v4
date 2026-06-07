@@ -5,7 +5,15 @@ import { useEffect, useState } from "react"
 import { BadgeCheck } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminRole, RoleLocale, RoleSeniority } from "@/lib/admin-types"
+import type {
+  AdminRole,
+  LocaleOption,
+  RoleForm,
+  RoleLocale,
+  RoleSeniority,
+  RolesPageClientProps,
+  SeniorityOption,
+} from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 
@@ -17,27 +25,27 @@ import { PageHeader } from "../components/page-header"
 import { RowActions } from "../components/row-actions"
 import { AppIcon } from "@/components/icons/app-icon"
 
-const LOCALES: { value: RoleLocale; label: string }[] = [
+const LOCALES: LocaleOption[] = [
   { value: "pt", label: "PT" },
   { value: "en", label: "EN" },
   { value: "todos", label: "Todos" },
 ]
 
-const SENIORITIES: { value: RoleSeniority; label: string }[] = [
+const SENIORITIES: SeniorityOption[] = [
   { value: "Junior", label: "Junior" },
   { value: "Pleno", label: "Pleno" },
   { value: "Senior", label: "Senior" },
   { value: "Lead", label: "Lead" },
 ]
 
-const emptyForm = {
+const emptyForm: RoleForm = {
   title: "",
   summary: "",
   category: "",
-  seniority: "" as string,
+  seniority: "",
   show: false,
   featured: false,
-  locale: "pt" as RoleLocale,
+  locale: "pt",
   active: true,
   sort_order: 0,
   color: "",
@@ -56,7 +64,7 @@ function boolBadge(value: boolean, yes = "Sim", no = "Não") {
   )
 }
 
-function formToPayload(form: typeof emptyForm) {
+function formToPayload(form: RoleForm) {
   return {
     title: form.title,
     summary: form.summary || null,
@@ -72,7 +80,7 @@ function formToPayload(form: typeof emptyForm) {
   }
 }
 
-export function RolesPageClient({ initialItems }: { initialItems: AdminRole[] }) {
+export function RolesPageClient({ initialItems }: RolesPageClientProps) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [items, setItems] = useState(initialItems)

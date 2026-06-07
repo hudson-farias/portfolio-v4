@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { Save, User } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminProfile } from "@/lib/admin-types"
+import type { AdminProfile, ProfileForm, ProfilePageClientProps } from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 
@@ -13,15 +13,6 @@ import { AlertBanner } from "../components/alert-banner"
 import { CheckboxField, Field, TextArea, TextInput } from "../components/form-fields"
 import { PageHeader } from "../components/page-header"
 import { Button } from "@/components/ui/button"
-
-type ProfileForm = {
-  name: string
-  last_name: string
-  summary: string
-  about_me: string
-  location: string
-  available: boolean
-}
 
 function profileToForm(profile: AdminProfile): ProfileForm {
   return {
@@ -34,7 +25,7 @@ function profileToForm(profile: AdminProfile): ProfileForm {
   }
 }
 
-export function ProfilePageClient({ initialProfile }: { initialProfile: AdminProfile | null }) {
+export function ProfilePageClient({ initialProfile }: ProfilePageClientProps) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [profile, setProfile] = useState(initialProfile)

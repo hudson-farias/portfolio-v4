@@ -1,7 +1,7 @@
 import { API } from "@/api/server"
 
 import { ProfilePageClient } from "./page-client"
-import type { AdminProfile } from "@/lib/admin-types"
+import type { AdminProfile } from "./interfaces"
 
 export default async function ProfilePage() {
   const response = await API.get("/admin/profile")

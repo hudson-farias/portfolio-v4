@@ -5,7 +5,11 @@ import { useEffect, useState } from "react"
 import { Share2 } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminSocialNetwork } from "@/lib/admin-types"
+import type {
+  AdminSocialNetwork,
+  SocialNetworkForm,
+  SocialNetworksPageClientProps,
+} from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 import { AlertBanner } from "../components/alert-banner"
@@ -17,21 +21,21 @@ import { AppIcon } from "@/components/icons/app-icon"
 import { socialIconNames } from "@/components/icons/map"
 import { RowActions } from "../components/row-actions"
 
-const emptyForm = {
+const emptyForm: SocialNetworkForm = {
   url: "",
   icon: "",
   show_header: false,
   show_footer: false,
 }
 
-function placementLabel(item: { show_header: boolean; show_footer: boolean }) {
+function placementLabel(item: Pick<SocialNetworkForm, "show_header" | "show_footer">) {
   const parts: string[] = []
   if (item.show_header) parts.push("Header")
   if (item.show_footer) parts.push("Footer")
   return parts.length > 0 ? parts.join(" · ") : "—"
 }
 
-export function SocialNetworksPageClient({ initialItems }: { initialItems: AdminSocialNetwork[] }) {
+export function SocialNetworksPageClient({ initialItems }: SocialNetworksPageClientProps) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [items, setItems] = useState(initialItems)

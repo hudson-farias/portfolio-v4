@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { ArrowRight, Download, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { HeroProfile } from "@/lib/types"
+import type { HeroProfile } from "../../interfaces"
 
 const TYPE_MS = 100
 const DELETE_MS = 55

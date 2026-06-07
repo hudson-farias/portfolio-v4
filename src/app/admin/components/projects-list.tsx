@@ -1,6 +1,6 @@
 import { RowActions } from "./row-actions"
 
-import type { Project } from "@/lib/types"
+import type { Project } from "@/types"
 
 export function ProjectsList({
     items,

@@ -5,7 +5,13 @@ import { useEffect, useState } from "react"
 import { Briefcase } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminExperience, AdminRole, ContractType } from "@/lib/admin-types"
+import type {
+  AdminExperience,
+  ContractType,
+  ContractTypeOption,
+  ExperienceForm,
+  ExperiencesPageClientProps,
+} from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 
@@ -15,28 +21,22 @@ import { FormModal } from "../components/form-modal"
 import { PageHeader } from "../components/page-header"
 import { ExperiencesTable } from "../components/experiences-table"
 
-const CONTRACT_TYPES: { value: ContractType; label: string }[] = [
+const CONTRACT_TYPES: ContractTypeOption[] = [
   { value: "CLT", label: "CLT" },
   { value: "PJ", label: "PJ" },
   { value: "FREELANCER", label: "Freelancer" },
 ]
 
-const emptyForm = {
+const emptyForm: ExperienceForm = {
   company: "",
   period: "",
-  role_id: "" as string,
-  contract_type: "" as string,
+  role_id: "",
+  contract_type: "",
   description: "",
   hidden: false,
 }
 
-export function ExperiencesPageClient({
-  initialItems,
-  roles,
-}: {
-  initialItems: AdminExperience[]
-  roles: AdminRole[]
-}) {
+export function ExperiencesPageClient({ initialItems, roles }: ExperiencesPageClientProps) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [items, setItems] = useState(initialItems)
@@ -140,7 +140,7 @@ export function ExperiencesPageClient({
           <ExperiencesTable
             items={items}
             canMutate={canMutate}
-            onEdit={openEdit}
+            onEdit={(item) => openEdit(item as AdminExperience)}
             onDelete={handleDelete}
           />
         )}

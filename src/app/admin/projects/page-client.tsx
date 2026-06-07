@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { FolderGit2, Plus } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminProject, AdminProjects } from "@/lib/admin-types"
+import type { AdminProject, ProjectsPageClientProps } from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 import { AlertBanner } from "../components/alert-banner"
@@ -13,7 +13,7 @@ import { PageHeader } from "../components/page-header"
 import { RowActions } from "../components/row-actions"
 import { Button } from "@/components/ui/button"
 
-export function ProjectsPageClient({ initialData }: { initialData: AdminProjects }) {
+export function ProjectsPageClient({ initialData }: ProjectsPageClientProps) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [data, setData] = useState(initialData)

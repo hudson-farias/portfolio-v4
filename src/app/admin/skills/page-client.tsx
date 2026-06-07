@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { Layers } from "lucide-react"
 
 import { API } from "@/api/client"
-import type { AdminSkill, AdminSkills } from "@/lib/admin-types"
+import type { AdminSkill, SkillForm, SkillsPageClientProps } from "./interfaces"
 
 import { useAdminAuth } from "@/contexts/admin-auth"
 import { AlertBanner } from "../components/alert-banner"
@@ -17,13 +17,13 @@ import { skillIconNames } from "@/components/icons/map"
 import { IconSelect } from "../components/icon-select"
 import { RowActions } from "../components/row-actions"
 
-const emptyForm = {
+const emptyForm: SkillForm = {
   name: "",
   icon: "",
   skill_category_id: 0,
 }
 
-export function SkillsPageClient({ initialData }: { initialData: AdminSkills }) {
+export function SkillsPageClient({ initialData }: SkillsPageClientProps) {
   const { canMutate, refreshAuth } = useAdminAuth()
 
   const [data, setData] = useState(initialData)
